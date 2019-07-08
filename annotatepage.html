@@ -1,0 +1,237 @@
+
+<link rel="stylesheet" type="text/css" href="master.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script><script type="text/javascript">
+
+    var perimeter = new Array();
+    var complete = false;
+    var canvas;
+    var ctx;
+    var peritmeters = [];
+    var tags = [];
+    var person = "";
+
+    function line_intersects(p0, p1, p2, p3) {
+        var s1_x, s1_y, s2_x, s2_y;
+        s1_x = p1['x'] - p0['x'];
+        s1_y = p1['y'] - p0['y'];
+        s2_x = p3['x'] - p2['x'];
+        s2_y = p3['y'] - p2['y'];
+        var s, t;
+        s = (-s1_y * (p0['x'] - p2['x']) + s1_x * (p0['y'] - p2['y'])) / (-s2_x * s1_y + s1_x * s2_y);
+        t = ( s2_x * (p0['y'] - p2['y']) - s2_y * (p0['x'] - p2['x'])) / (-s2_x * s1_y + s1_x * s2_y);
+        if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+        {
+            return true; // Collision detected
+        }
+        return false; // No collision
+    }
+    function point(x, y){
+        ctx.fillStyle="white";
+        ctx.strokeStyle = "white";
+        ctx.fillRect(x-2,y-2,4,4);
+        ctx.moveTo(x,y);
+    }
+    function undo(){
+        ctx = undefined;
+        perimeter.pop();
+        complete = false;
+        $("#submitButton").attr("disabled", "disabled");
+        start(true);
+    }
+    function clear_canvas(){
+        ctx = undefined;
+        perimeter = new Array();
+        complete = false;
+        $("#submitButton").attr("disabled", "disabled");
+        document.getElementById('coordinates').value = '';
+        start();
+    }
+    function draw(end){
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "white";
+        ctx.lineCap = "square";
+        ctx.beginPath();
+        for(var i=0; i<perimeter.length; i++){
+            if(i==0){
+                ctx.moveTo(perimeter[i]['x'],perimeter[i]['y']);
+                end || point(perimeter[i]['x'],perimeter[i]['y']);
+            } else {
+                ctx.lineTo(perimeter[i]['x'],perimeter[i]['y']);
+                end || point(perimeter[i]['x'],perimeter[i]['y']);
+            }
+        }
+        if(end){
+            ctx.lineTo(perimeter[0]['x'],perimeter[0]['y']);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.fill();
+            ctx.strokeStyle = 'blue'; // change colours for different polygons??
+            complete = true;
+            // enable submit button and draw polygon
+            $("#submitButton").removeAttr("disabled"); // we should include a hover or perminant display of the tag
+        }
+        ctx.stroke();
+        // print coordinates
+        if(perimeter.length == 0){
+            document.getElementById('coordinates').value = '';
+        } else {
+            document.getElementById('coordinates').value = JSON.stringify(perimeter);
+        }
+    }
+    function check_intersect(x,y){
+        if(perimeter.length < 4){
+            return false;
+        }
+        var p0 = new Array();
+        var p1 = new Array();
+        var p2 = new Array();
+        var p3 = new Array();
+        p2['x'] = perimeter[perimeter.length-1]['x'];
+        p2['y'] = perimeter[perimeter.length-1]['y'];
+        p3['x'] = x;
+        p3['y'] = y;
+        for(var i=0; i<perimeter.length-1; i++){
+            p0['x'] = perimeter[i]['x'];
+            p0['y'] = perimeter[i]['y'];
+            p1['x'] = perimeter[i+1]['x'];
+            p1['y'] = perimeter[i+1]['y'];
+            if(p1['x'] == p2['x'] && p1['y'] == p2['y']){ continue; }
+            if(p0['x'] == p3['x'] && p0['y'] == p3['y']){ continue; }
+            if(line_intersects(p0,p1,p2,p3)==true){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+    function point_it(event) {
+        var rect, x, y;
+        if(event.ctrlKey){
+            //for faster undo use ctrl+click
+            undo();
+            return false;
+        } else if(complete){
+            peritmeters.push(perimeter)
+            tags.push(person);
+            complete = false;
+            perimeter = new Array();
+            draw(false);
+        }
+        else if(event.which === 3 || event.button === 2){
+            //atempt to close polygon
+            if(perimeter.length==2){
+                alert('You need at least three points for a polygon');
+                return false;
+            }
+            x = perimeter[0]['x'];
+            y = perimeter[0]['y'];
+            if(check_intersect(x,y)){
+                alert('The line you are drawing intersect another line');
+                return false;
+            }
+            draw(true);
+            person = prompt("Polygon Closed, please enter the tag");
+            while (person == null || person == "") {
+                 person = prompt("Polygon Closed, please enter the tag");
+            }
+        event.preventDefault();
+            return false;
+            }else {
+            rect = canvas.getBoundingClientRect();
+            x = event.clientX - rect.left;
+            y = event.clientY - rect.top;
+            if (perimeter.length>0 && x == perimeter[perimeter.length-1]['x'] && y == perimeter[perimeter.length-1]['y']){
+                // same point - double click
+                return false;
+            }
+            if(check_intersect(x,y)){
+                alert('The line you are drawing intersect another line');
+                return false;
+            }
+            perimeter.push({'x':x,'y':y});
+            draw(false);
+            return false;
+        }
+    }
+    function start(with_draw) {
+        canvas = document.getElementById("jPolygon");
+        var img = new Image();
+        img.src = canvas.getAttribute('data-imgsrc');
+        img.onload = function(){
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            if(with_draw == true){
+                draw(false);
+            }
+        }
+    }
+</script>
+
+<!-- Beginning of the html document-->
+<div style="display:block; vertical-align:top; padding: 10px;">
+
+<center><h1>Image Annotation Tool</h1></center>
+<p>Welcome to our image annotation tool, this tool was set up to build a dataset of annotated images - which will eventually be used to contribute to our machine learning model. <br>
+We'd appreciate it if you were to contribute to our dataset. Here's some more information about the task:</p>
+<ul>
+    <li>First, you'll be presented with some trial tasks, where <b>the parameters of the correct annotations have already been submitted</b>:<br> this is to ensure that the annotations we contribute to our dataset are accurate enough.</li>
+	<li>Please draw a contour using the <b>mouse left button</b> to click and connect points</li>
+	<li>To finish the contour polygon use the <b>mouse right button</b>. This will connect the first to the last point.</li>
+	<li>Remove the last point by clicking <b>Ctrl + mouse click</b> or click on the <b>Undo button.</b></li>
+	<li>Clear all points by clicking on the <b>Reset button</b></li>
+</ul>
+
+<ul>
+	<li>A good contour must be drawn close to the object's boundaries.<br />
+	Please take a look at the example figures... (we need to include example figures, or test the workers)</li>
+</ul>
+
+<p id="buttons"><input id="undo_button" type="button" value="Undo" /> <input id="reset_button" type="Reset" value="Reset" /> <input id="submit_button" type="button" value="Submit" /></p>
+
+<p><!-- Coordinates input from user --><!-- <strong>Coordinates:</strong> <textarea disabled="disabled" id="coordinates" name="coordinates" style="width:300px; height:200px;"></textarea> --><input id="coordinates" name="coordinates" type="hidden" /></p>
+</div>
+
+<div id="imgframe" style="float:center"><!--change the data-imgsrc="${img_url}" -->
+<p><canvas data-imgsrc="https://ohsheglows.com/wp-content/uploads/2019/03/veganpowerbowls-2157-5-683x1024.jpg" id="jPolygon" oncontextmenu="return false;" onmousedown="point_it(event)" style="cursor:crosshair"> Your browser does not support the HTML5 canvas tag. </canvas></p>
+</div>
+
+<div style="display:block; vertical-align:top; float:left; margin-left:20px;">
+<!--<p><label for="comment"><em>Comment:</em></label><textarea id="comment_area" name="comment"></textarea></p>-->
+
+<p>Press <b>Left Click</b> to draw a point, <strong>CTRL+Click</strong> to undo or <strong>Right Click</strong> to close the polygon.</p>
+</div>
+<script type="text/javascript">
+        $("#submit_button").click(function(e) {
+                 peritmeters.push(perimeter);
+                 tags.push(person);
+                 console.log(peritmeters);
+                 console.log(tags);
+            });
+        $(document).ready(function(){
+            //create variables
+
+            var perimeter = new Array();
+            var complete = false;
+            var canvas = document.getElementById("jPolygon");
+            var ctx;
+            var img = new Image();
+            img.src = canvas.getAttribute('data-imgsrc');
+
+            clear_canvas();
+            //initialize butons
+            $("#reset_button").click(function(e) {
+                 clear_canvas();
+            });
+
+            $("#undo_button").click(function(e) {
+                 undo();
+            });
+            $("#submitButton").attr("disabled", "disabled");
+            $("#submitButton").detach().appendTo("#buttons");
+        });
+</script>
