@@ -1,5 +1,10 @@
-
+<!-- Custom CSS -->
 <link rel="stylesheet" type="text/css" href="master.css">
+
+<!-- Bootstrap CDN -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<!-- AJAX for JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script><script type="text/javascript">
 
     var perimeter = new Array();
@@ -167,13 +172,21 @@
             }
         }
     }
+    function myFunction() {
+  alert(" mouse left button to click & connect points \n mouse right button to complete polygon \n CTRL + mouse click to remove the last point ");
+}
 </script>
 
 <!-- Beginning of the html document-->
-<div style="display:block; vertical-align:top; padding: 10px;">
+<div class="card" id="top-card">
+    <div class="card-body">
 
-<center><h1>Image Annotation Tool</h1></center>
-<p>Welcome to our image annotation tool, this tool was set up to build a dataset of annotated images - which will eventually be used to contribute to our machine learning model. <br>
+
+<center>
+<h1>Image Annotation Tool</h1>
+<p id="credits"><i>by Louis Davies-Cren & Omar Wagih, on behalf of Cardiff University School of Computer Science & Informatics</i></p>
+</center>
+<p>This tool was developed  to build a dataset of annotated images - which will eventually be used to contribute to our machine learning model. <br>
 We'd appreciate it if you were to contribute to our dataset. Here's some more information about the task:</p>
 <ul>
     <li>First, you'll be presented with some trial tasks, where <b>the parameters of the correct annotations have already been submitted</b>:<br> this is to ensure that the annotations we contribute to our dataset are accurate enough.</li>
@@ -188,19 +201,28 @@ We'd appreciate it if you were to contribute to our dataset. Here's some more in
 	Please take a look at the example figures... (we need to include example figures, or test the workers)</li>
 </ul>
 
-<p id="buttons"><input id="undo_button" type="button" value="Undo" /> <input id="reset_button" type="Reset" value="Reset" /> <input id="submit_button" type="button" value="Submit" /></p>
+
+</div>
 
 <p><!-- Coordinates input from user --><!-- <strong>Coordinates:</strong> <textarea disabled="disabled" id="coordinates" name="coordinates" style="width:300px; height:200px;"></textarea> --><input id="coordinates" name="coordinates" type="hidden" /></p>
 </div>
+<div class="card" align="middle">
+    <div id="imgframe" class="card-img-top" style="float:center"><!--change the data-imgsrc="${img_url}" -->
+    <p><canvas data-imgsrc="https://media.istockphoto.com/photos/health-food-for-fitness-picture-id855098134?k=6&m=855098134&s=612x612&w=0&h=eIWWpYWKTz_z2ryYAo0Dd97igUZVExzl4AKRIhUrFj4=" id="jPolygon" oncontextmenu="return false;" onmousedown="point_it(event)" style="cursor:crosshair"> Your browser does not support the HTML5 canvas tag. </canvas></p>
+    <div class="card-body">
 
-<div id="imgframe" style="float:center"><!--change the data-imgsrc="${img_url}" -->
-<p><canvas data-imgsrc="https://ohsheglows.com/wp-content/uploads/2019/03/veganpowerbowls-2157-5-683x1024.jpg" id="jPolygon" oncontextmenu="return false;" onmousedown="point_it(event)" style="cursor:crosshair"> Your browser does not support the HTML5 canvas tag. </canvas></p>
+        <p class="card-text">Press <b>Left Click</b> to draw a point, <strong>CTRL+Click</strong> to undo or <strong>Right Click</strong> to close the polygon.</p>
+        <p id="buttons"><input id="undo_button" type="button" value="Undo" class="btn btn-outline-primary"/> <input id="reset_button" type="Reset" value="Reset" class="btn btn-outline-primary"/> <input id="submit_button" type="button" value="Submit" class="btn btn-primary"/></p>
+
+
+    </div>
+    </div>
 </div>
+
 
 <div style="display:block; vertical-align:top; float:left; margin-left:20px;">
 <!--<p><label for="comment"><em>Comment:</em></label><textarea id="comment_area" name="comment"></textarea></p>-->
 
-<p>Press <b>Left Click</b> to draw a point, <strong>CTRL+Click</strong> to undo or <strong>Right Click</strong> to close the polygon.</p>
 </div>
 <script type="text/javascript">
         $("#submit_button").click(function(e) {
@@ -227,6 +249,8 @@ We'd appreciate it if you were to contribute to our dataset. Here's some more in
             $("#undo_button").click(function(e) {
                  undo();
             });
+            $("#help_button").alert("This is an alert");
+
             $("#submitButton").attr("disabled", "disabled");
             $("#submitButton").detach().appendTo("#buttons");
         });
