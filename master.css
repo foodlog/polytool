@@ -27,3 +27,7 @@ h1, ul, p {
     margin: 4px 2px;
     cursor: pointer;
 }
+
+a[type="link"] {
+    background-color: transparent;
+}
