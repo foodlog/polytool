@@ -29,5 +29,10 @@ h1, ul, p {
 }
 
 a[type="link"] {
+    padding-left: 20px;
     background-color: transparent;
+}
+
+#imgframe {
+    object-fit: contain;
 }
