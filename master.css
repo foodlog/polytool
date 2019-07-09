@@ -10,6 +10,7 @@ h1, ul, p {
 #credits {
     font-size: 12px;
 }
+
 .card {
     margin: 20px;
     padding-top: 10px;
@@ -33,6 +34,6 @@ a[type="link"] {
     background-color: transparent;
 }
 
-#imgframe {
-    object-fit: contain;
+#imgcanvas {
+    max-width: 100%;
 }

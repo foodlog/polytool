@@ -174,6 +174,7 @@
         var img = new Image();
         img.src = canvas.getAttribute('data-imgsrc');
         img.onload = function() {
+            // img.width = getElementById("imgcard");
             canvas.width = img.width;
             canvas.height = img.height;
             ctx = canvas.getContext("2d");
@@ -195,7 +196,7 @@
 
         <center>
             <h1>Image Annotation Tool</h1>
-            <p id="credits"><i>by Louis Davies-Cren & Omar Wagih, on behalf of Cardiff University School of Computer Science & Informatics</i></p>
+            <p id="credits"><i>Cardiff University School of Computer Science & Informatics</i></p>
         </center>
         <p>This tool was developed to build a dataset of annotated images - which will eventually be used to contribute to our machine learning model. <br>
             We'd appreciate it if you were to contribute to our dataset. Here's some more information about the task:</p>
@@ -220,10 +221,10 @@
 <!-- Coordinates input from user -->
 <!-- <strong>Coordinates:</strong> <textarea disabled="disabled" id="coordinates" name="coordinates" style="width:300px; height:200px;"></textarea> --><input id="coordinates" name="coordinates" type="hidden" /></p>
 <p>
-    <div class="card" align="middle">
-        <div id="imgframe" class="card-img-top" style="float:center">
+    <div id="imgcard" class="card" align="middle">
+        <div id="imgframe" class="card-img-top">
             <!--change the data-imgsrc="${img_url}" -->
-            <p><canvas style="object-fit:fill;" data-imgsrc="https://media.istockphoto.com/photos/health-food-for-fitness-picture-id855098134?k=6&m=855098134&s=612x612&w=0&h=eIWWpYWKTz_z2ryYAo0Dd97igUZVExzl4AKRIhUrFj4=" id="jPolygon" oncontextmenu="return false;"
+            <p id="imgcanvas"><canvas data-imgsrc="https://media.istockphoto.com/photos/health-food-for-fitness-picture-id855098134?k=6&m=855098134&s=612x612&w=0&h=eIWWpYWKTz_z2ryYAo0Dd97igUZVExzl4AKRIhUrFj4=" id="jPolygon" oncontextmenu="return false;"
                     onmousedown="point_it(event)" style="cursor:crosshair"> Your browser does not support the HTML5 canvas tag. </canvas></p>
 
             <div class="card-body">
