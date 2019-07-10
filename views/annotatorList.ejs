@@ -1,0 +1,23 @@
+<head>
+    <link rel="stylesheet" href="stylesheets/navbar.css" />
+    <link rel="stylesheet" href="stylesheets/Signup.css" />
+    <link rel="stylesheet" href="stylesheets/annotatorList.css" />
+</head>
+
+<body>
+    <div style="background: #FFF;" class="left">
+        <%- include navbar.ejs %>
+        <div class="row">
+            <% annotators.forEach(function(user){ %>
+                <div class="column">
+                    <div class="card">
+                        Mturk Code:
+                        <%= user.email %>
+                            <br> Number of annotations:
+                            <%= user.annotations.length%>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+    </div>
+</body>

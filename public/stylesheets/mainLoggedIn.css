@@ -1,0 +1,34 @@
+
+.myButton {
+    background: #16a085;
+    border: none;
+    margin-top: 20px;
+    width: 200px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 60px;
+    height: 60px;
+    border-radius: 2px;
+    color: #FFF;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: 0.1s ease;
+    cursor: pointer;
+}
+
+
+.myButton:hover,
+.myButton:focus {
+    opacity: 0.8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    transition: 0.1s ease;
+}
+
+.myButton:active {
+    opacity: 1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transition: 0.1s ease;
+}

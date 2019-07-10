@@ -1,0 +1,29 @@
+<head>
+    <link rel="stylesheet" href="stylesheets/Signup.css" />
+    <link rel="stylesheet" href="stylesheets/datasetList.css" />
+    <link rel="stylesheet" href="stylesheets/navbar.css" />
+</head>
+
+<body>
+    <div style="background: #FFF;" class="left">
+        <%- include navbar.ejs %>
+        <div class="row">
+            <% Datasets.forEach(function(dataset){ %>
+                <div class="column">
+                    <div class="card">
+                        Name:
+                        <%= dataset.name %>
+                            <br> Date:
+                            <%= dataset.date.toUTCString().slice(0,16); %>
+                                <br> Possible Annotations:
+                                <br>
+                                <% dataset.annotations.forEach(function(annotation){ %>
+                                    <%= annotation %>
+                                        <br>
+                                        <%  }); %>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+    </div>
+</body>

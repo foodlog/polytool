@@ -1,0 +1,21 @@
+<head>
+    <link rel="stylesheet" href="stylesheets/Signup.css" />
+    <link rel="stylesheet" href="stylesheets/navbar.css" />
+</head>
+
+<body>
+    <div id="login-box" style="height:100%;margin-top:0;margin-bottom:0">
+        <div class="main">
+          <%- include navbar.ejs %>
+            <h1>Add a database</h1>
+            <input type="text" name="name" placeholder="Database Name" />
+            <input type="text" name="date" placeholder="Database's Date" />
+            <input type="text" name="width" placeholder="Standard width" />
+            <input type="text" name="height" placeholder="Standard height" />
+            <input type="text" name="depth" placeholder="Standard depth" />
+            <textarea style="height:50px;width:320px" name="possibleAnnotations" placeholder="A list of possible annotations, leave empty for no restrictions" wrap="soft"></textarea>
+            <textarea style="height:50px;width:320px" name="database" placeholder="URLs for images separated by new lines"></textarea>
+            <input type="submit" name="addDatabaseSubmit" value="Add Database" />
+        </div>
+    </div>
+</body>

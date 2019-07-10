@@ -1,0 +1,39 @@
+<head>
+    <link rel="stylesheet" href="stylesheets/Signup.css" />
+    <link rel="stylesheet" href="stylesheets/navbar.css" />
+</head>
+
+<body style="min-height:100%">    
+    <div style="background: #FFF;" class="left">
+       <%- include navbar.ejs %>
+       <div class = "right">
+        <form action="/add-database" method="post">
+            <div>
+                <h1>Add a database</h1>
+                <input type="text" name="name" placeholder="Database Name" />
+                <label for="date">Database's date:</label>
+                <input type="date" id="date" name="date" />
+                <input type="text" name="width" placeholder="Standard width" />
+                <input type="text" name="height" placeholder="Standard height" />
+                <input type="text" name="depth" placeholder="Standard depth" />
+                <textarea style="height:50px;width:320px" name="possibleAnnotations" placeholder="A list of possible annotations, leave empty for no restrictions" wrap="soft"></textarea>
+                <textarea style="height:50px;width:320px" name="database" placeholder="URLs for images separated by new lines"></textarea>
+                <input type="submit" name="addDatabaseSubmit" value="Add Database" />
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+</body>
+
+<style>
+    .right{
+        padding:40px;
+    }
+    .left {
+        padding:0;
+        width: 600px;
+        left: 50%;
+        transform: translate(-50%);
+    }
+</style>

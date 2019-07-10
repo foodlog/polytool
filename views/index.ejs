@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>Annotorious Example Page</title>
+    <link rel="stylesheet" href="stylesheets/AnnotoriousCss/theme-dark/annotorious-dark.css" />
+    <script src="javascripts/annotorious.min.js"></script>
+   <script>
+   var Data = []
+   var mainId = 0
+  anno.addHandler('onAnnotationCreated', function(annotation) {
+    var Annotate = {
+      id: mainId,
+      text: annotation.text,
+      src: annotation.src,
+      shapes: annotation.shapes
+    }
+    Data.push(Annotate)
+    mainId = mainId + 1
+  });
+  anno.addHandler('onAnnotationUpdated', function(annotation) {
+    for (i = 0; i < Data.length; i++)
+    {
+    var GeoData = Data[i].shapes[0].geometry
+    var GeoAnnotation = annotation.shapes[0].geometry
+     if(GeoData.x == GeoAnnotation.x && GeoData.y == GeoAnnotation.y && GeoData.height == GeoAnnotation.height && GeoData.width == GeoAnnotation.width)
+     {
+       var Annotate = {
+      id: Data[i].id,
+      text: annotation.text,
+      src: annotation.src,
+      shapes: annotation.shapes
+       }
+       Data[i] = Annotate
+     }
+    }
+    console.log(Data)
+    }); 
+  anno.addHandler('onAnnotationRemoved', function(annotation) {
+    for (i = 0; i < Data.length; i++)
+    {
+    var GeoData = Data[i].shapes[0].geometry
+    var GeoAnnotation = annotation.shapes[0].geometry
+     if(GeoData.x == GeoAnnotation.x && GeoData.y == GeoAnnotation.y && GeoData.height == GeoAnnotation.height && GeoData.width == GeoAnnotation.width)
+     {
+      delete Data[i]
+     }
+    }
+    console.log(Data)
+  });
+   </script>
+  </head>
+  <body>
+
+      <h2>Demo Image</h2>
+      <div>
+        <img src="images/640px-Hallstatt.jpg" class="annotatable">
+      </div>
+  </body>
+</html>
