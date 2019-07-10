@@ -14,7 +14,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Our JS Code-->
-    <script src="functionality.js"></script>
+    <script src="annotator/functionality.js"></script>
 
 </head>
 
@@ -29,11 +29,13 @@
             <p>This tool was developed to build a dataset of annotated images - which will eventually be used to contribute to our machine learning model. <br>
                 We'd appreciate it if you were to contribute to our dataset. Here's some more information about the task:</p>
             <ul>
-                <li>First, you'll be presented with some trial tasks, where <b>the parameters of the correct annotations have already been submitted</b>:<br> this is to ensure that the annotations we contribute to our dataset are accurate enough.</li>
+                <li>First, you'll be presented with some trial tasks, where <b>the parameters of the correct annotations have already been submitted</b>:<br> this is to ensure that the annotations we contribute to our dataset are accurate enough.
+                </li>
                 <li>Draw a contour using the <b>mouse left button</b> to click and connect points.</li>
                 <li>To finish the contour polygon use the <b>mouse right button</b>. This will connect the first to the last point.</li>
                 <li>Remove the last point by clicking <b>Ctrl + mouse click</b> or click on the <b>Undo button</b>.</li>
                 <li>Clear all points by clicking on the <b>Reset button</b>.</li>
+                <li>To go into <b>Delete Mode</b>, click the <b>Delete button</b>. This will allow you to remove multiple polygons at once.</li>
                 <li>Once you have completed all annotations, press <b>Submit</b>.</li>
             </ul>
 
@@ -51,13 +53,12 @@
     <!-- <strong>Coordinates:</strong> <textarea disabled="disabled" id="coordinates" name="coordinates" style="width:300px; height:200px;"></textarea> --><input id="coordinates" name="coordinates" type="hidden" />
     <div id="imgcard" class="card" align="middle">
         <div id="imgframe" class="card-img-top">
-            <!--change the data-imgsrc="${img_url}" -->
-            <p id="imgcanvas"><canvas data-imgsrc="https://media.istockphoto.com/photos/health-food-for-fitness-picture-id855098134?k=6&m=855098134&s=612x612&w=0&h=eIWWpYWKTz_z2ryYAo0Dd97igUZVExzl4AKRIhUrFj4=" id="jPolygon"
-                    oncontextmenu="return false;" onmousedown="point_it(event)" style="cursor:crosshair"> Your browser does not support the HTML5 canvas tag. </canvas>
+            <!--change the data-imgsrc="${img_url}" - Currently got a hardcoded image for an example. -->
+            <p id="imgcanvas"><canvas data-imgsrc="annotator.jpeg" id="jPolygon" oncontextmenu="return false;" onmousedown="point_it(event)" style="cursor:crosshair"> Your browser does not support the HTML5 canvas tag. </canvas>
 
                 <div class="card-body">
                     <p class="card-text">Press <b>Left Click</b> to draw a point, <strong>CTRL+Click</strong> to undo or <strong>Right Click</strong> to close the polygon.</p>
-                    <p id="buttons"><input id="undo_button" type="button" value="Undo" class="btn btn-outline-primary" /> <input id="reset_button" type="Reset" value="Reset" class="btn btn-outline-primary" /> <input id="submit_button" type="button"
+                    <p id="buttons"><input id="undo_button" type="button" value="Delete" class="btn btn-primary" /> <input id="undo_button" type="button" value="Undo" class="btn btn-outline-primary" /> <input id="reset_button" type="Reset" value="Reset" class="btn btn-outline-primary" /> <input id="submit_button" type="button"
                             value="Submit" class="btn btn-primary" /></p>
                 </div>
         </div>

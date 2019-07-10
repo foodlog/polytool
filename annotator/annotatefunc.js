@@ -162,15 +162,15 @@ function point_it(event) {
 
 function start(with_draw) {
     canvas = document.getElementById("jPolygon");
-    imgcard = document.getElementById("imgcard");
+    // imgcard = document.getElementById("imgcard");
     var img = new Image();
     img.src = canvas.getAttribute('data-imgsrc');
     img.onload = function() {
         // img.width = getElementById("imgcard");
-        canvas.width = imgcard.style.width;
-        img.width = imgcard.style.width;
-        //canvas.width = img.width;
-        //canvas.height = img.height;
+        // canvas.width = imgcard.style.width;
+        // img.width = imgcard.style.width;
+        canvas.width = img.width;
+        canvas.height = img.height;
         ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         if (with_draw == true) {
