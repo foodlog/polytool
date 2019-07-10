@@ -9,14 +9,15 @@ var person = "";
 // Big box dimensions
 var big_TL = ;
 var big_TR = ;
-var big_BR = ;
 var big_BL = ;
+var big_BR = ;
 
 // Small box dimensions
 var small_TL = ;
 var small_TR = ;
-var small_BR = ;
 var small_BL = ;
+var small_BR = ;
+
 
 function x_positions(xpo) {
     xpo = perimeter.filter(function(value, index, Arr) {
@@ -26,7 +27,7 @@ function x_positions(xpo) {
 
 function y_positions(ypo) {
     ypo = perimeter.filter(function(value, index, Arr) {
-        return index % 2 == 0; // Need this to start from positon 1 instead of position 0
+        return index % 2 == 1; // Need this to start from positon 1 instead of position 0
     });
 }
 
