@@ -26,7 +26,7 @@ function x_positions(xpo) {
 
 function y_positions(ypo) {
     ypo = perimeter.filter(function(value, index, Arr) {
-        return index % 2 == 0;
+        return index % 2 == 0; // Need this to start from positon 1 instead of position 0
     });
 }
 
