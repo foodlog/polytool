@@ -2,7 +2,7 @@ var perimeter = new Array();
 var complete = false;
 var canvas;
 var ctx;
-var peritmeters = [];
+var perimeters = [];
 var tags = [];
 var person = "";
 
@@ -28,23 +28,40 @@ function point(x, y) {
     ctx.moveTo(x, y);
 }
 
+// undo basically clears the canvas and then starts a new canvas and draw the old figures in it
 function undo() {
-    ctx = undefined;
-    perimeter.pop();
+    clear_canvas(true);
     complete = false;
-    $("#submitButton").attr("disabled", "disabled");
-    start(true);
 }
-
-function clear_canvas() {
+// when this is used for undo, make sure to draw old figures
+function clear_canvas(undoVal) {
     ctx = undefined;
     perimeter = new Array();
     complete = false;
     $("#submitButton").attr("disabled", "disabled");
     document.getElementById('coordinates').value = '';
-    start();
+    start(false,undoVal);
 }
 
+// drawAll draws every figure in the perimeters array, which is the entire figure list until the last uncomplete figure
+function drawAll() {
+    for(var j = 0;j < perimeters.length;j++) {
+        perimeter = new Array();
+        for (var i = 0; i < perimeters[j].length+1; i++) {
+            if (i == perimeters[j].length) {
+                draw(true,perimeter)
+                break;
+            } else {
+                perimeter.push(perimeters[j][i])
+                draw(false,perimeter)
+            }
+            
+        }  
+    }
+    perimeter = new Array();
+}
+
+// deleted the "Complete" part of the if statement, it was causing a multiple mouse click problem
 function draw(end) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = "white";
@@ -114,13 +131,9 @@ function point_it(event) {
         //for faster undo use ctrl+click
         undo();
         return false;
-    } else if (complete) {
-        peritmeters.push(perimeter)
-        tags.push(person);
-        complete = false;
-        perimeter = new Array();
-        draw(false);
     } else if (event.which === 3 || event.button === 2) {
+        perimeters.push(perimeter)
+        tags.push(person);
         //atempt to close polygon
         if (perimeter.length == 2) {
             alert('You need at least three points for a polygon');
@@ -137,6 +150,7 @@ function point_it(event) {
         while (person == null || person == "") {
             person = prompt("Polygon Closed, please enter the tag");
         }
+        perimeter = new Array();
         event.preventDefault();
         return false;
     } else {
@@ -160,7 +174,7 @@ function point_it(event) {
     }
 }
 
-function start(with_draw) {
+function start(with_draw,isUndo) {
     canvas = document.getElementById("jPolygon");
     // imgcard = document.getElementById("imgcard");
     var img = new Image();
@@ -176,6 +190,9 @@ function start(with_draw) {
         if (with_draw == true) {
             draw(false);
         }
+        if(isUndo){
+            drawAll()
+        }
     }
 }
 
@@ -183,14 +200,13 @@ function myFunction() {
     alert(" mouse left button to click & connect points \n mouse right button to complete polygon \n CTRL + mouse click to remove the last point ");
 }
 
-// Buttons functionality
-$("#submit_button").click(function(e) {
-    peritmeters.push(perimeter);
-    tags.push(person);
-    console.log(peritmeters);
+function submitButton(){
+    console.log(perimeters);
     console.log(tags);
     alert("You have successfully submitted your annotations.")
-});
+}
+
+// Buttons functionality
 $(document).ready(function() {
     // Create variables
     var perimeter = new Array();
@@ -216,3 +232,7 @@ $(document).ready(function() {
     $("#submitButton").attr("disabled", "disabled");
     $("#submitButton").detach().appendTo("#buttons");
 });
+
+function undoButton() {
+    undo();
+    }
