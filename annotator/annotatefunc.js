@@ -55,8 +55,8 @@ function drawAll() {
                 perimeter.push(perimeters[j][i])
                 draw(false,perimeter)
             }
-            
-        }  
+
+        }
     }
     perimeter = new Array();
 }

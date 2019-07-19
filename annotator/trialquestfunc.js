@@ -7,16 +7,16 @@ var tags = [];
 var person = "";
 
 // Big box dimensions
-var big_TL = ;
-var big_TR = ;
-var big_BL = ;
-var big_BR = ;
+var big_TL = 10;
+var big_TR = 10;
+var big_BL = 10;
+var big_BR = 10;
 
 // Small box dimensions
-var small_TL = ;
-var small_TR = ;
-var small_BL = ;
-var small_BR = ;
+var small_TL = 10;
+var small_TR = 10;
+var small_BL = 10;
+var small_BR = 10;
 
 
 function x_positions(xpo) {
@@ -32,11 +32,11 @@ function y_positions(ypo) {
 }
 
 function big_box() { // Checks if the polygon dimensions fit within the big box
-
+    
 }
 
 function small_box() { // Checks if the polygon dimensions fits around the small box
-    if (perimeter)
+
 }
 
 function line_intersects(p0, p1, p2, p3) {
@@ -241,7 +241,7 @@ $(document).ready(function() {
         undo();
     });
 
-    $("#help_button").alert("This is an alert");
+
 
     $("#submitButton").attr("disabled", "disabled");
     $("#submitButton").detach().appendTo("#buttons");
