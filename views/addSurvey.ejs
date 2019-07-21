@@ -1,0 +1,45 @@
+<head>
+    <link rel="stylesheet" href="stylesheets/Signup.css" />
+    <link rel="stylesheet" href="stylesheets/navbar.css" />
+
+</head>
+
+<body style="min-height:100%">    
+    <div style="background: #FFF;" class="left">
+       <%- include navbar.ejs %>
+       <div class = "right">
+        <form action="/add-survey" method="post">
+            <div>
+                <h1>Add a Survey </h1>
+                <p> Adding a survey will give you a link that you could then add to Amazon Mturk or Prolific Academic
+                    the survey will allow your workers to annotate images from a specific dataset, either randomized 
+                    for every worker or alphabetically sorted </p>
+                    <p> Database Name </p>
+                    <select name="databaseName">
+                    <% Names.forEach(function(name){ %>
+                    <option value="<%=name%>"><%=name%></option>
+                    <% }); %>
+                    </select>
+                <input type ="text" name="number" placeholder="Number of images"/>
+                <p>How should the images be choosed:</p>
+                <input type="radio" name="choice" value="Alpha">Alphabetically Sorted<br>
+                <input type="radio" name="choice" value="Random">Randomized<br> 
+                <input type="submit" id="submitButton" name="addSurveySubmit" value="Add Survey" />
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+</body>
+
+<style>
+    .right{
+        padding:40px;
+    }
+    .left {
+        padding:0;
+        width: 600px;
+        left: 50%;
+        transform: translate(-50%);
+    }
+</style>

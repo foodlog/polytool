@@ -25,8 +25,25 @@ const imagesSchema = new Schema({
     created: { type: Date, default: Date.now }
   });
 
+const coordinatesSchema = new Schema({
+    imageUrl: String,
+    tags:Array,
+    coordinates: Array,
+    created: { type: Date, default: Date.now }
+  });
+
+const surveySchema = new Schema({
+    ownerEmail: String,
+    surveyLink: String,
+    datasetName: String,
+    randOrAlpha: String,
+    numberOfImages: Number,
+    created: { type: Date, default: Date.now }
+  });
+
 const models = {};
 models.Users = mongoose.model('user-database', userSchema);
 models.Databases = mongoose.model('images-datasets',imagesSchema);
-
+models.Surveys = mongoose.model('survey-database',surveySchema);
+models.Coords = mongoose.model('coordinates-database',coordinatesSchema);
 module.exports = models;
