@@ -6,6 +6,9 @@ var peritmeters = [];
 var tags = [];
 var person = "";
 
+// There's probably a much cleaner way of doing this, but this is just temporary to simplify debugging
+// T = Top | B = Bottom // L = Left | R = Right // x = X-axis | y = Y-axis
+
 // Big box dimensions
 var big_TLx = 10;
 var big_TLy = 10;
@@ -27,8 +30,8 @@ var small_BRx = 10;
 var small_BRy = 10;
 
 
-function x_positions(xpo, xpo_max, xpo_min) {
-    xpo = perimeter.filter(function(value, index, Arr) {
+function x_positions(xpo, xpo_max, xpo_min) { // Creates an array containing only the X-axis values
+    xpo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
         return index % 2 == 0;
     });
 
@@ -37,9 +40,9 @@ function x_positions(xpo, xpo_max, xpo_min) {
     xpo_min = Math.min(...xpo);// smallest value of xpo
 }
 
-function y_positions(ypo, ypo_max, ypo_min) {
-    ypo = perimeter.filter(function(value, index, Arr) {
-        return index % 2 == 1; // Need this to start from positon 1 instead of position 0
+function y_positions(ypo, ypo_max, ypo_min) { // Creates an array containing only the Y-axis values
+    ypo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
+        return index % 2 == 1;
     });
 
     ypo_max = Math.max(...ypo); // largest value of ypo
