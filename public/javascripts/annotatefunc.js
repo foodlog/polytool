@@ -146,7 +146,8 @@ function point_it(event) {
         }
         draw(true);
         person = prompt("Polygon Closed, please enter the tag");
-        while (person == null || person == "") {
+        console.log(!input.possibleAnnotations.includes(person),person)
+        while (person == null && person == "" || (input.possibleAnnotations != undefined && input.possibleAnnotations.length != 0 && !input.possibleAnnotations.includes(person))) {
             person = prompt("Polygon Closed, please enter the tag");
         }
         perimeters.push(perimeter)
@@ -214,7 +215,6 @@ function submitButton(){
     imageNumber = imageNumber + 1
     if(imageNumber == input.images.length)
     {
-        console.log(input)
         $.ajax({
             type: "POST",
             url: url[0] + "//" + url[2] + "/surveySubmit/" +surveyUrl,

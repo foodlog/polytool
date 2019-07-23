@@ -134,6 +134,7 @@ router.get('/surveyDone/:surveyLink', async function(req,res,next){
 		console.log(obj)
 	}
 	});
+	console.log(prolificLink)
 	amazonLink = amazonLink + (Date.now()/1000).toString().substring(0,3)
 	res.render('done',{prolificLink:prolificLink,amazonLink:amazonLink})
 })
@@ -170,11 +171,12 @@ router.get('/survey/:surveyLink',async function(req,res,next){
 				outputImages.push(data.images[z])
 				z = z+1
 			}
-			console.log(outputImages,surveyObj.datasetName,req.params.surveyLink)
+			console.log(data)
 			output = {
 				images:outputImages,
 				datasetName: surveyObj.datasetName,
-				surveyLink: req.params.surveyLink
+				surveyLink: req.params.surveyLink,
+				possibleAnnotations: data.annotations
 			}
 		}
 	});
@@ -225,7 +227,13 @@ router.get('/annotator-list',checkSignIn, async function (req, res, next) {
 
 router.post('/add-database', function (req, res, next) {
 	let annotations = req.body.possibleAnnotations.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
+	annotations = annotations.filter(function (el) {
+		return el != null;
+	});
 	let dataset = req.body.database.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
+	dataset = dataset.filter(function (el) {
+		return el != null;
+	});
 	var imageDatabase = {
 		name: req.body.name,
 		date: req.body.date,

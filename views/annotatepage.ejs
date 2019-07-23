@@ -45,6 +45,15 @@
             <ul>
                 <li>A good contour must be drawn close to the object's boundaries.
                     <br /> Please take a look at the example figures...</li>
+                 <%if (input.possibleAnnotations != undefined && input.possibleAnnotations.length > 0 ) { %>
+                <li> The possible annotations for this dataset are 
+                        <ul>
+                            <% input.possibleAnnotations.forEach(function(anno){ %>
+                            <li> <%= anno %> </li>
+                            <% })%>
+                        </ul>
+                    </li>
+                <% } %>
             </ul>
             <a type="link" class="btn btn-link btn-sm" href="../examples/example1.html" target="_blank">Example 1</a>
             <a type="link" class="btn btn-link btn-sm" href="../examples/example2.html" target="_blank">Example 2</a>
