@@ -1,10 +1,19 @@
 const mongoose = require('mongoose');
+const env = require('./config/env');
 
+env.get();
+mongodb = {
+        uri: 'mongodb://' + process.env.MONGO_DB_HOST + ':' + process.env.MONGO_DB_PORT + '/' + process.env.MONGO_DB_DATABASE + process.env.MONGO_DB_PARAMETERS,
+        username: process.env.MONGO_DB_USERNAME,
+        password: process.env.MONGO_DB_PASSWORD
+    }
+mongoose.connect(mongodb.uri, {
+      user: mongodb.username,
+      pass: mongodb.password,
+      socketTimeoutMS:0,
+     useNewUrlParser: true
+  });
 const Schema = mongoose.Schema;
-mongoose.connect('mongodb://localhost:27017/local', {
-    socketTimeoutMS:0,
-    useNewUrlParser: true});
-
 const userSchema = new Schema({
     username: String,
     password: String,
@@ -35,6 +44,8 @@ const coordinatesSchema = new Schema({
 const surveySchema = new Schema({
     ownerEmail: String,
     surveyLink: String,
+    profilicLink: String,
+    amazonLink: String,
     datasetName: String,
     randOrAlpha: String,
     numberOfImages: Number,

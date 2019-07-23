@@ -1,23 +1,39 @@
 <head>
-<link rel="stylesheet" href="stylesheets/mainLoggedIn.css" />
-<link rel="stylesheet" href="stylesheets/Signup.css" />
-<link rel="stylesheet" href="stylesheets/datasetList.css" />
-<link rel="stylesheet" href="stylesheets/navbar.css" />
+    <link rel="stylesheet" href="stylesheets/mainLoggedIn.css" />
+    <link rel="stylesheet" href="stylesheets/Signup.css" />
+    <link rel="stylesheet" href="stylesheets/datasetList.css" />
+    <link rel="stylesheet" href="stylesheets/navbar.css" />
 </head>
 
 <body>
-        <div style="background: #FFF;" class="left">
+    <div style="background: #FFF;" class="left">
         <%- include navbar.ejs %>
-        <center>
-            <table>
-              <tr><td><button onclick="location.href='/dataset-list';"  class="myButton">Dataset List</button></td></tr>
-              <tr><td><button onclick="location.href='/annotator-list';"  class="myButton">Annotator's List</button></td></tr>
-              <tr><td> <button onclick="location.href='/add-database';"  class="myButton">Add a new dataset</button></td></tr>
-              <tr><td>  <button onclick="location.href='/logout';" method="post"  class="myButton">Log Out</button></td></tr>
-            </table>
-        </center>
-        </div>
+            <center>
+                <table>
+                    <tr>
+                        <td>
+                            <button onclick="location.href='/dataset-list';" class="myButton">Dataset List</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="location.href='/annotator-list';" class="myButton">Annotator's List</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="location.href='/add-database';" class="myButton">Add a new dataset</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="location.href='/logout';" method="post" class="myButton">Log Out</button>
+                        </td>
+                    </tr>
+                </table>
+            </center>
+    </div>
 </body>
-<style> 
+<style>
 
 </style>

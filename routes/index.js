@@ -4,10 +4,8 @@ const bodyParser = require('body-parser');
 const database = require('../database');
 
 /* GET home page. */
-router.get('/', checkSignIn, function (req, res, next) {
-	res.render('index', {
-		title: 'Express'
-	});
+router.get('/', function (req, res, next) {
+	res.render("home.ejs")
 });
 router.post('/signupr', function (req, res, next) {
 	console.log(req.body);
@@ -108,6 +106,8 @@ router.post('/add-survey',checkSignIn, async function(req,res,next){
 	var survey = {
 		ownerEmail: req.session.user.email,
 		surveyLink: surveyLink,
+		prolificLink: req.body.Prolific,
+		amazonLink: req.body.Amazon,
 		datasetName: req.body.databaseName,
 		randOrAlpha: req.body.choice.substring(0,1),
 		numberOfImages: req.body.number
@@ -116,14 +116,26 @@ router.post('/add-survey',checkSignIn, async function(req,res,next){
 	res.redirect('/surveysuccess/'+surveyLink)
 });
 
-router.get('/surveysuccess/:surveyLink',checkSignIn, function(req,res,next){
-	surveyLink = "localhost:3000/survey/"+req.params.surveyLink
+router.get('/surveysuccess/:surveyLink', function(req,res,next){
+	var surveyLink = req.protocol + '://' + req.get('host') + "/survey/" +req.params.surveyLink;
 	res.render('surveySuccess',{surveyLink:surveyLink})
 })
 
 
-router.get('/surveyDone/:surveyLink',function(req,res,next){
-	res.render('done')
+router.get('/surveyDone/:surveyLink', async function(req,res,next){
+	var prolificLink;
+	var amazonLink;
+	await database.Surveys.findOne({surveyLink:req.params.surveyLink}, function (err, obj) {
+		if (err) {
+			console.log(err);
+		} else {
+		prolificLink = obj.prolificLink
+		amazonLink = obj.amazonLink
+		console.log(obj)
+	}
+	});
+	amazonLink = amazonLink + (Date.now()/1000).toString().substring(0,3)
+	res.render('done',{prolificLink:prolificLink,amazonLink:amazonLink})
 })
 
 router.get('/survey/:surveyLink',async function(req,res,next){
