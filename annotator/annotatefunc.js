@@ -227,7 +227,7 @@ $(document).ready(function() {
         undo();
     });
 
-    $("#help_button").alert("This is an alert");
+
 
     $("#submitButton").attr("disabled", "disabled");
     $("#submitButton").detach().appendTo("#buttons");
