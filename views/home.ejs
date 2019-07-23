@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+
+    <meta charset="utf-8">
+    <title>Annotation Tool</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/master.css">
+
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- AJAX for JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <div class="card" id="top-card">
+        <div class="card-body">
+            <center>
+                <h1>Image Annotation Tool</h1>
+                <p id="credits"><i>Cardiff University School of Computer Science & Informatics</i></p>
+            </center>
+            <p>This tool was developed to build a dataset of annotated images - which will eventually be used to contribute to our machine learning model.
+                <br> We'd appreciate it if you were to contribute to our dataset.</p>
+            <br>
+            <p> As a researcher, you can create surveys for your databases, share your survey links on websites like Amazon Mturk and Prolific Academic and export your annotation dataset to work on it as you wish! </p>
+            <div class="card-body">
+                <p id="buttons">
+                    <input onclick="location.href = '/signupr'" id="signup_button" type="button" value="signup" class="btn btn-primary" />
+                    <input onclick="location.href = '/login'" id="login_button" type="button" value="login" class="btn btn-primary" />
+                </p>
+            </div>
+        </div>
+    </div>

@@ -126,12 +126,6 @@ function check_intersect(x, y) {
     }
     return false;
 }
-
-function iDoExist()
-{
-    console.log("Yeah I DO")
-}
-
 function point_it(event) {
     var rect, x, y;
     if (event.ctrlKey) {
@@ -139,7 +133,6 @@ function point_it(event) {
         undo();
         return false;
     } else if (event.which === 3 || event.button === 2) {
-        perimeters.push(perimeter)
         //atempt to close polygon
         if (perimeter.length == 2) {
             alert('You need at least three points for a polygon');
@@ -156,6 +149,7 @@ function point_it(event) {
         while (person == null || person == "") {
             person = prompt("Polygon Closed, please enter the tag");
         }
+        perimeters.push(perimeter)
         tags.push(person);
         perimeter = new Array();
         event.preventDefault();
@@ -216,16 +210,16 @@ function submitButton(){
         imageUrl: imageURL
     })
     let surveyUrl = window.location.pathname.split('/')[2]
+    let url = window.location.toString().split('/')
     imageNumber = imageNumber + 1
-    console.log(JSON.stringify(output))
     if(imageNumber == input.images.length)
     {
         console.log(input)
         $.ajax({
             type: "POST",
-            url: "http://localhost:3000/surveySubmit/"+surveyUrl,
+            url: url[0] + "//" + url[2] + "/surveySubmit/" +surveyUrl,
             complete: function(){
-                window.location = "http://localhost:3000/surveyDone/"+surveyUrl
+                window.location = url[0] + "//" + url[2] + "/surveyDone/"+surveyUrl
             },
             contentType: 'application/json',
             data: JSON.stringify(output)
