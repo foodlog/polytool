@@ -7,36 +7,72 @@ var tags = [];
 var person = "";
 
 // Big box dimensions
-var big_TL = 10;
-var big_TR = 10;
-var big_BL = 10;
-var big_BR = 10;
+var big_TLx = 10;
+var big_TLy = 10;
+var big_TRx = 10;
+var big_TRy = 10;
+var big_BLx = 10;
+var big_BLy = 10;
+var big_BRx = 10;
+var big_BRy = 10;
 
 // Small box dimensions
-var small_TL = 10;
-var small_TR = 10;
-var small_BL = 10;
-var small_BR = 10;
+var small_TLx = 10;
+var small_TLy = 10;
+var small_TRx = 10;
+var small_TRy = 10;
+var small_BLx = 10;
+var small_BLy = 10;
+var small_BRx = 10;
+var small_BRy = 10;
 
 
-function x_positions(xpo) {
+function x_positions(xpo, xpo_max, xpo_min) {
     xpo = perimeter.filter(function(value, index, Arr) {
         return index % 2 == 0;
     });
+
+    xpo_max = Math.max(...xpo); // largest value of xpo
+
+    xpo_min = Math.min(...xpo);// smallest value of xpo
 }
 
-function y_positions(ypo) {
+function y_positions(ypo, ypo_max, ypo_min) {
     ypo = perimeter.filter(function(value, index, Arr) {
         return index % 2 == 1; // Need this to start from positon 1 instead of position 0
     });
+
+    ypo_max = Math.max(...ypo); // largest value of ypo
+
+    ypo_min = Math.min(...ypo); // smallest value of ypo
 }
 
 function big_box() { // Checks if the polygon dimensions fit within the big box
-    
+    var bb_status = false;
+    if ((xpo_min > big_BLx) && (ypo_min > big_BLy) && (xpo_max < big_TRx) && (ypo_max < big_TRy)) {
+        return bb_status = true;
+    } else {
+        alert("Your annotation is not accurate enough, please try again.");
+    }
 }
 
 function small_box() { // Checks if the polygon dimensions fits around the small box
+    var i;
+    for (i = 0; i < xpo.length; i++) {
+        if (((small_BLx > xpo[i]) || (xpo[i] > small_BRx)) && ((small_TLy < ypo[i]) || (small_BLy > ypo[i]))) {
+            return sb_status = true;
+        } else {
+            alert("Your annotation is not accurate enough, please try again.");
+        }
+    }
 
+
+function both_boxes() {
+    if (bb_status == true && sb_status == true) {
+        // User can move forward
+        alert("This annotation was accurate enough to move onwards to the task!");
+
+    }
 }
 
 function line_intersects(p0, p1, p2, p3) {
@@ -209,9 +245,6 @@ function start(with_draw) {
     }
 }
 
-function myFunction() {
-    alert(" mouse left button to click & connect points \n mouse right button to complete polygon \n CTRL + mouse click to remove the last point ");
-}
 
 // Buttons functionality
 $("#submit_button").click(function(e) {
@@ -246,3 +279,7 @@ $(document).ready(function() {
     $("#submitButton").attr("disabled", "disabled");
     $("#submitButton").detach().appendTo("#buttons");
 });
+
+function undoButton() {
+    undo();
+    }
