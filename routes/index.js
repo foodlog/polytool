@@ -171,12 +171,16 @@ router.get('/survey/:surveyLink',async function(req,res,next){
 				outputImages.push(data.images[z])
 				z = z+1
 			}
-			console.log(data)
 			output = {
 				images:outputImages,
 				datasetName: surveyObj.datasetName,
 				surveyLink: req.params.surveyLink,
 				possibleAnnotations: data.annotations
+			}
+			console.log(data.annotations)
+			if(data.annotations[0] == "" )
+			{
+				output.possibleAnnotations = undefined
 			}
 		}
 	});
