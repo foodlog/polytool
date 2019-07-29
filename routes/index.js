@@ -81,6 +81,45 @@ router.post('/login', async function (req, res, next) {
 	res.redirect('/login')
 })
 
+router.get('/logout',function(req,res,next){
+	req.session.user = null
+	res.redirect('/')
+})
+
+router.post('/datasetExport/:id',async function(req,res,next){
+	var id = req.params.id
+	var imageData = []
+	var imageLinks
+	await database.Databases.find({_id: id}, function (err, obj) {
+		if (err) {
+		var err = new Error("Database Error!");
+		next(err);
+		} else {
+		console.log(obj)
+		imageLinks = obj[0].images
+	}
+	});
+	const forLoop = async _ => {
+		for (let index = 0; index < imageLinks.length; index++) {
+			await database.Coords.find({imageUrl:imageLinks[index]},{'_id': false}, function (err, obj) {
+				if (err) {
+				var err = new Error("Database Error!");
+				next(err);
+				} else {
+					console.log(obj.length)
+					if(obj.length != 0)
+					{
+						 imageData.push(obj[0])
+					}
+				}
+			});
+		}
+	  }
+	await forLoop();
+	res.json(imageData)
+
+})
+
 // check if the user is signed in, if he is render the add database file
 router.get('/addDatabase', helper.checkSignIn, function (req, res, next) {
 	res.render('addDatabase');

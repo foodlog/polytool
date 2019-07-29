@@ -2,8 +2,28 @@
     <link rel="stylesheet" href="stylesheets/Signup.css" />
     <link rel="stylesheet" href="stylesheets/datasetList.css" />
     <link rel="stylesheet" href="stylesheets/navbar.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
+<script>
 
+function exportDataset(id){
+    console.log(id)
+    let url = window.location.toString().split('/')
+    $.ajax({
+            type: "POST",
+            url: url[0] + "//" + url[2] + "/datasetExport/" +id,
+            success: function(obj){
+                var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+                var a = document.createElement('a');
+                a.href = 'data:' + data;
+                a.download = 'data.json';
+                document.body.appendChild(a);
+                a.style.display = 'none';
+                a.click();
+            },
+         });
+}
+</script>
 <body>
     <div style="background: #FFF;" class="left">
         <%- include navbar.ejs %>
@@ -21,9 +41,31 @@
                                         <%= annotation %>
                                             <br>
                                             <%  }); %>
+                            <button class ="exportButton" onclick="exportDataset('<%=dataset._id%>')"> Export </button>
                         </div>
                     </div>
                     <% }); %>
             </div>
     </div>
 </body>
+
+<style>
+.exportButton {
+margin: 0;
+position: absolute;
+top: 50%;
+left: 90%;
+transform: translate(-50%, -50%);
+padding:0.35em 1.2em;
+border:0.1em solid #FFFFFF;
+border-radius:0.12em;
+box-sizing: border-box;
+text-decoration:none;
+font-family:'Roboto',sans-serif;
+font-weight:300;
+text-align:center;
+transition: all 0.2s;
+} 
+
+</style>
+
