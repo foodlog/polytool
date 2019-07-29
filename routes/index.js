@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 const bodyParser = require('body-parser');
 const database = require('../database');
-
+const helper = require('../public/javascripts/helper')
 /* GET home page. */
 router.get('/', function (req, res, next) {
-	res.render("home.ejs")
+	res.render("home")
 });
+
+// Signup as a researcher, TODO: Generate list of codes for the university and check if the code is legit
 router.post('/signupr', function (req, res, next) {
-	console.log(req.body);
 	var user2 = {
 		username: req.body.username,
 		email: req.body.email,
@@ -18,25 +19,12 @@ router.post('/signupr', function (req, res, next) {
 	database.Users.create(user2)
 	res.redirect('/login')
 });
+router.get('/signupr', function (req, res, next) {
+	res.render('signupr');
+});
 
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
-
-function checkSignIn(req, res, next) {
-	if (req.session.user) {
-		next(); //If session exists, proceed to page
-	} else {
-		var err = new Error("Not logged in!");
-		next(err); //Error, trying to access unauthorized page!
-	}
-}
-
+/*
+FOR FUTURE USE ONLY: in case we ever need to create accounts for annotators.
 router.post('/signup', function (req, res, next) {
 	var user2 = {
 		email: req.body.code,
@@ -47,50 +35,91 @@ router.post('/signup', function (req, res, next) {
 	database.Users.create(user2)
 	res.redirect('/login')
 });
-router.get('/signupr', function (req, res, next) {
-	res.render('signupr');
-});
-router.get('/main', checkSignIn, function (req, res, next) {
-	res.render('mainLoggedIn');
-});
 router.get('/signup', function (req, res, next) {
 	res.render('signup');
 });
+
+*/
+
+// Researcher's dashboard
+router.get('/main', helper.checkSignIn, function (req, res, next) {
+	res.render('main');
+});
+
 router.get('/login', function (req, res, next) {
 	res.render('login');
 });
+// 
 router.post('/login', async function (req, res, next) {
 	var loginUsername = req.body.email
 	var loginPassword = req.body.password
-	var stuff
+	var loggedUser
 	await database.Users.findOne({
 		email: loginUsername,
 		password: loginPassword
 	}, function (err, obj) {
 		if (err) {
-			console.log(err);
+		var err = new Error("Database Error!");
+		next(err);
 		} else
-			console.log("login successfull")
-		stuff = obj
+		{
+
+			loggedUser = {
+			username: obj.username,
+			email: obj.email,
+			admin: obj.admin
+		}
+
+		}
 	});
-  req.session.user = stuff
-  console.log(stuff)
-  if(stuff.admin == true)
+  req.session.user = loggedUser
+  if(loggedUser.admin == true)
   {
     res.redirect('/main')
   }
   else
-	res.redirect('/')
+	res.redirect('/login')
 })
-router.get('/add-database', checkSignIn, function (req, res, next) {
+
+// check if the user is signed in, if he is render the add database file
+router.get('/addDatabase', helper.checkSignIn, function (req, res, next) {
 	res.render('addDatabase');
 });
 
-router.get('/add-survey', checkSignIn, async function (req, res, next) {
+// Adds a new dataset to the database
+router.post('/addDatabase', function (req, res, next) {
+	// annotations and links to images are sent as a string with lines seperating them, 
+	// This is to turn that string into seperate arrays of annotations and links to images.
+	let annotations = req.body.possibleAnnotations.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
+	annotations = annotations.filter(function (el) {
+		return el != null;
+	});
+	let dataset = req.body.database.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
+	dataset = dataset.filter(function (el) {
+		return el != null;
+	});
+
+	var imageDatabase = {
+		name: req.body.name,
+		date: req.body.date,
+		width: req.body.width,
+		height: req.body.height,
+		depth: req.body.depth,
+		annotations: annotations,
+		images: dataset,
+	}
+	database.Databases.create(imageDatabase);
+	res.redirect('datasetList');
+});
+
+// To add a survey, the researcher needs a list of the current datasets available
+// TODO: Check if the datasets need to be only the ones uploaded by this specific researcher
+router.get('/addSurvey', helper.checkSignIn, async function (req, res, next) {
 	let names = []
 	await database.Databases.find({}, function (err, obj) {
 		if (err) {
-			console.log(err);
+			var err = new Error("Database Error!");
+		next(err);
 		} else {
 		obj.forEach(function(object){
 			names.push(object.name)
@@ -100,7 +129,9 @@ router.get('/add-survey', checkSignIn, async function (req, res, next) {
 	res.render('addSurvey', {Names:names});
 });
 
-router.post('/add-survey',checkSignIn, async function(req,res,next){
+// Creates a survey and gives it a random link, the link depends on the first two letters of the dataset's name
+// then followed by 7 random characters
+router.post('/addSurvey',helper.checkSignIn, async function(req,res,next){
 	let r = Math.random().toString(36).substring(7);
 	let surveyLink = req.body.databaseName.substring(0,2)+r
 	var survey = {
@@ -113,34 +144,38 @@ router.post('/add-survey',checkSignIn, async function(req,res,next){
 		numberOfImages: req.body.number
 	}
 	database.Surveys.create(survey)
-	res.redirect('/surveysuccess/'+surveyLink)
+	res.redirect('/surveyCreated/'+surveyLink)
 });
 
-router.get('/surveysuccess/:surveyLink', function(req,res,next){
+// Shows the researcher a success page with his survey link to share
+// TODO: might be a good idea to put social media share buttons here
+router.get('/surveyCreated/:surveyLink', function(req,res,next){
 	var surveyLink = req.protocol + '://' + req.get('host') + "/survey/" +req.params.surveyLink;
-	res.render('surveySuccess',{surveyLink:surveyLink})
+	res.render('surveyCreated',{surveyLink:surveyLink})
 })
 
-
+// After the user successfully finishes the survey, route him into a success page with a 
+// prolific academic and an amazon link, the prolific academic link is given by the platform
+// while the amazon link is a random characters added to a base code supplied by the researcher
+// TODO: store the amazon codes for cross referencing && Show the user a specific platform based
+// on which site routed him to the survey
 router.get('/surveyDone/:surveyLink', async function(req,res,next){
 	var prolificLink;
 	var amazonLink;
 	await database.Surveys.findOne({surveyLink:req.params.surveyLink}, function (err, obj) {
 		if (err) {
-			console.log(err);
+			var err = new Error("Database Error!");
+			next(err);
 		} else {
 		prolificLink = obj.prolificLink
 		amazonLink = obj.amazonLink
-		console.log(obj)
 	}
 	});
-	console.log(prolificLink)
 	amazonLink = amazonLink + (Date.now()/1000).toString().substring(0,3)
-	res.render('done',{prolificLink:prolificLink,amazonLink:amazonLink})
+	res.render('surveySuccess',{prolificLink:prolificLink,amazonLink:amazonLink})
 })
 
 router.get('/survey/:surveyLink',async function(req,res,next){
-	console.log(req.params.surveyLink)
 	let outputImages = []
 	let surveyObj;
 	let output = {}
@@ -148,22 +183,24 @@ router.get('/survey/:surveyLink',async function(req,res,next){
 		surveyLink: req.params.surveyLink
 	}, function (err, obj) {
 		if (err) {
-			console.log(err);
+			var err = new Error("Database Error!");
+			next(err);
 		} else {
 			surveyObj = obj;
 		}
 	});
+	// Find the approperiate dataset for the survey, make a (randomized or not) array with the possible annotations
 	await database.Databases.findOne({
 		name:surveyObj.datasetName
 	}, function(err,data){
 		if(err){
-			console.log(err)
-			return;
+			var err = new Error("Database Error!");
+			next(err);
 		}
 		else
 		{
 			if(surveyObj.randOrAlpha == "R"){
-				shuffleArray(data.images)
+				helper.shuffleArray(data.images)
 			}
 			let z = 0;
 			while(z < surveyObj.numberOfImages && z < data.images.length)
@@ -184,73 +221,78 @@ router.get('/survey/:surveyLink',async function(req,res,next){
 			}
 		}
 	});
-	console.log("After the database request")
+
 	res.render('annotatepage.ejs',{input:output})
 })
+// for each annotation, if the image is new create an entry for it with tags and coordinates, if it is not then
+// add the array of tags and coordinates to the old entry
 router.post('/surveySubmit/:surveyUrl', express.urlencoded({ extended: true }), async function(req,res,next){
 	req.body.forEach(function(data){
 		var inDB = {
 			imageUrl: data.imageUrl,
-			tags: data.tags,
-			coordinates:data.coordinates
+			tags: [data.tags],
+			coordinates:[data.coordinates]
 		}
-		database.Coords.create(inDB);
+		database.Coords.findOne({imageUrl:data.imageUrl}, async function(err,obj){
+			if(err)
+			{
+				var err = new Error("Database Error!");
+				next(err);
+			}
+			else
+			{
+				if(obj == null){
+					database.Coords.create(inDB)
+				} 
+				else
+				{
+					obj.tags.push(data.tags)
+					obj.coordinates.push(data.coordinates)
+					await obj.save();
+				}
+			}
+		})
+		
 	})
 	res.redirect('/surveyDone/'+req.params.surveyUrl)
 })
-router.get('/dataset-list',checkSignIn, async function (req, res, next) {
-	var stuff
+
+// get a list of datasets TODO: Figure out if this needs to be researcher specific
+router.get('/datasetList',helper.checkSignIn, async function (req, res, next) {
+	var datasetList
 	await database.Databases.find({}, function (err, obj) {
 		if (err) {
-			console.log(err);
+			var err = new Error("Database Error!");
+		next(err);
 		} else
-		stuff = obj
+		datasetList = obj
 	});
-	console.log(stuff)
-	res.render('DatasetList', {
-		Datasets: stuff
+	res.render('datasetList', {
+		Datasets: datasetList
 	});
 });
 
-
-router.get('/annotator-list',checkSignIn, async function (req, res, next) {
+/* 
+FOR FUTURE USE: in case we need to keep track of annotators
+router.get('/annotatorList',helper.checkSignIn, async function (req, res, next) {
+	var annotatorList
 	await database.Users.find({
 		admin: false
 	}, function (err, obj) {
 		if (err) {
-			console.log(err);
+				var err = new Error("Database Error!");
+		next(err);
 		} else
-			console.log("login successfull")
-		stuff = obj
+		annotatorList = obj
 	});
-	console.log(stuff)
 	res.render('annotatorList', {
-		annotators: stuff
+		annotators: annotatorList 
 	});
 });
 
-router.post('/add-database', function (req, res, next) {
-	let annotations = req.body.possibleAnnotations.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
-	annotations = annotations.filter(function (el) {
-		return el != null;
-	});
-	let dataset = req.body.database.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
-	dataset = dataset.filter(function (el) {
-		return el != null;
-	});
-	var imageDatabase = {
-		name: req.body.name,
-		date: req.body.date,
-		width: req.body.width,
-		height: req.body.height,
-		depth: req.body.depth,
-		annotations: annotations,
-		images: dataset,
-	}
-	console.log(imageDatabase);
-	database.Databases.create(imageDatabase);
-	res.redirect('dataset-list');
-});
+*/
+
+
 
 module.exports = router;
 

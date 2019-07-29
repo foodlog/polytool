@@ -19,7 +19,6 @@ const userSchema = new Schema({
     password: String,
     email: String,
     admin: Boolean,
-    annotations:Array,
     created: { type: Date, default: Date.now }
   });
 
@@ -27,19 +26,18 @@ const imagesSchema = new Schema({
     name: String,
     date: Date,
     width: Number,
+    ownerEmail:String,
     height: Number,
     depth: Number,
     annotations: Array,
     images: Array,
-    created: { type: Date, default: Date.now }
-  });
+});
 
 const coordinatesSchema = new Schema({
     imageUrl: String,
-    tags:Array,
-    coordinates: Array,
-    created: { type: Date, default: Date.now }
-  });
+    tags:[Array],
+    coordinates: [Array],
+ });
 
 const surveySchema = new Schema({
     ownerEmail: String,

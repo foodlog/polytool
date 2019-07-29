@@ -63,6 +63,7 @@ function drawAll() {
     perimeter = new Array();
 }
 
+//
 // deleted the "Complete" part of the if statement, it was causing a multiple mouse click problem
 function draw(end) {
     ctx.lineWidth = 1;
