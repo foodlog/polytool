@@ -19,12 +19,12 @@ or simple tools that rely on bounding boxes, our tool allows researchers to uplo
 
 This is a nodejs with expressJS project, the file structure here is as simple as it gets
 
-- Package.json : nodemodules needed to run the project
+- Package.json : Nodemodules needed to run the project
 - Database.js : Schemes and connection information of MongoDB using mongoose.
 - App.js : Main file for the application, has includes and uses.
 - views : EJS files.
 - public : Javascript file for the annotation page and CSS files for the ESJ files.
-- routes : index.js includes all the routing logic for the website.
+- routes : Index.js includes all the routing logic for the website.
 - config : Holds config data for the environment (currently only database configuration)
 
 ## How to use
