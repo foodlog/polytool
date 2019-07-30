@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose')
 const bodyParser = require('body-parser');
 const database = require('../database');
 const helper = require('../public/javascripts/helper')
@@ -90,7 +91,7 @@ router.post('/datasetExport/:id',async function(req,res,next){
 	var id = req.params.id
 	var imageData = []
 	var imageLinks
-	await database.Databases.find({_id: ObjectId(id)}, function (err, obj) {
+	await database.Databases.find({_id: mongoose.Types.ObjectId(id)}, function (err, obj) {
 		if (err) {
 		var err = new Error("Database Error!");
 		next(err);
