@@ -90,7 +90,7 @@ router.post('/datasetExport/:id',async function(req,res,next){
 	var id = req.params.id
 	var imageData = []
 	var imageLinks
-	await database.Databases.find({_id: id}, function (err, obj) {
+	await database.Databases.find({_id: ObjectId(id)}, function (err, obj) {
 		if (err) {
 		var err = new Error("Database Error!");
 		next(err);
