@@ -267,12 +267,14 @@ router.get('/survey/:surveyLink',async function(req,res,next){
 // for each annotation, if the image is new create an entry for it with tags and coordinates, if it is not then
 // add the array of tags and coordinates to the old entry
 router.post('/surveySubmit/:surveyUrl', express.urlencoded({ extended: true }), async function(req,res,next){
+	console.log(req.body)
 	req.body.forEach(function(data){
 		var inDB = {
 			imageUrl: data.imageUrl,
 			tags: [data.tags],
 			coordinates:[data.coordinates]
 		}
+		console.log(inDB)
 		database.Coords.findOne({imageUrl:data.imageUrl}, async function(err,obj){
 			if(err)
 			{
