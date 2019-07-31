@@ -39,6 +39,7 @@ def equalize_dimensions(polygonA, polygonB, A_length, B_length):
     # while(A_length != B_length):
     while(A_length > B_length):
         M = ((polygonA[0] + polygonA[-2])/difference, (polygonA[1] + polygonA[-1])/difference)
+        return M
 
 
 equalize_dimensions(polygonA, polygonB, A_length, B_length)
