@@ -3,8 +3,12 @@ body {
     margin: 10px;
 }
 
-h1, h6, ul, p {
+h1, h6, ul, p, form {
     font-family: Helvetica;
+}
+
+h1 {
+    padding-bottom: 20px;
 }
 
 #credits {
@@ -36,4 +40,8 @@ a[type="link"] {
 
 #imgcanvas {
     max-width: 100%;
+}
+
+#consentsubmit {
+    margin-top: 10px;
 }

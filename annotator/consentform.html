@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Consent Form</title>
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" type="text/css" href="master.css">
+
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- AJAX for JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Our JS Code-->
+    <script src="consentfunc.js"></script>
+
+</head>
+
+<body>
+    <div class="card" id="top-card">
+        <div class="card-body">
+            <center>
+                <h1>Participants Information</h1>
+            </center>
+            <h2>Introduction</h2>
+
+            <p>The research that you're about to participate in has a very wide scope, but this specific task focuses on improving the quality of crowdsourced image annotations, which will eventually be implemented into Machine Learning models. The
+                primary reason for experimenting on a smaller scale like this, is that it is a great help for us to improve our algorithms, which will help us improve our end product! <br> For more information about this research or any other
+                queries, feel free to contact <u>davies-crenLE@cardiff.ac.uk</u>. </p>
+
+            <h3>Important Information</h3>
+
+            <p>Please read through this information before signing the consent form:</p>
+            <ul>
+                <li>Your participation is voluntarily.</li>
+                <li>Pressing the 'Submit' button at the bottom of the page is considered as consent for your participation.</li>
+                <li>You may withdraw from the research at any time and for any reason.</li>
+                <li>You have any given amount of time to consider your participation, you are by no means obligated to participate.</li>
+                <li>None of your personal data will be collected, but your annotations will be collected for further development purposes and will not be presented or published <br> (this will be stored for the period of the study, and an additional
+                    5 years after that.)</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="card" id="bottom-card">
+        <div class="card-body">
+            <center>
+                <h1>Consent Form</h1>
+            </center>
+            <p>Before you can participate in this research project, we need to check whether you're a suitable candidate. Please answer each of the following questions:</p>
+
+            <!-- <form class="consentform" action="annotatepage.html" method="post"> -->
+            <!-- <input class="consent" type="checkbox" name="age" value="age"> I am over 18 years of age. <br>
+                <input class="consent" type="checkbox" name="comms" value="comms"> I do not have any learning or communication difficulties. <br>
+                <input class="consent" type="checkbox" name="custody" value="custody"> I am not in custody. <br>
+                <input class="consent" type="checkbox" name="illegal" value="illegal"> I am not involved in illegal activities. <br> -->
+
+            <ul>
+                <li> I am over 18 years of age.</li>
+                <li> I do not have any learning or communication difficulties.</li>
+                <li> I am not in custody.</li>
+                <li> I am not involved in illegal activities.</li>
+                <li> I do not belong to any other vulnerable group, other than those listed above.</li>
+            </ul>
+
+            <form name="frm" action="annotatepage.html" method="post">
+                <table>
+                    <tr>
+                        <td align=center><input type="checkbox" name="chk" onClick="apply()"></td>
+                    </tr> I have read the 'Important Information' section and declare that I comply with the criteria stated above.
+                    <tr>
+                        <td align=center><input type="button" name="sub" href="annotatepage.html" value="submit" disabled>Button</td>
+                    </tr>
+                    <tr>
+                        <td align=center><a href="annotatepage.html" style="color:#3D366F;text-decoration:none;cursor:pointer;font-size:13px" disabled>Submit</a></td>
+                    </tr>
+                </table>
+            </form>
+            <script type="text/javascript">
+                function apply() {
+                    document.frm.sub.disabled = true;
+                    if (document.frm.chk.checked == true) {
+                        document.frm.sub.disabled = false;
+                    }
+                    if (document.frm.chk.checked == false) {
+                        document.frm.sub.enabled = false;
+                    }
+                }
+            </script>
+
+        </div>
+    </div>
+
+    <form class="" action="index.html" method="post">
+
+    </form>
+<a href="annotatepage.html">button</a>
+</body>
+
+</html>
