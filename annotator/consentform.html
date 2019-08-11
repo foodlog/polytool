@@ -45,19 +45,12 @@
         </div>
     </div>
 
-
     <div class="card" id="bottom-card">
         <div class="card-body">
             <center>
                 <h1>Consent Form</h1>
             </center>
             <p>Before you can participate in this research project, we need to check whether you're a suitable candidate. Please answer each of the following questions:</p>
-
-            <!-- <form class="consentform" action="annotatepage.html" method="post"> -->
-            <!-- <input class="consent" type="checkbox" name="age" value="age"> I am over 18 years of age. <br>
-                <input class="consent" type="checkbox" name="comms" value="comms"> I do not have any learning or communication difficulties. <br>
-                <input class="consent" type="checkbox" name="custody" value="custody"> I am not in custody. <br>
-                <input class="consent" type="checkbox" name="illegal" value="illegal"> I am not involved in illegal activities. <br> -->
 
             <ul>
                 <li> I am over 18 years of age.</li>
@@ -67,38 +60,18 @@
                 <li> I do not belong to any other vulnerable group, other than those listed above.</li>
             </ul>
 
-            <form name="frm" action="annotatepage.html" method="post">
-                <table>
-                    <tr>
-                        <td align=center><input type="checkbox" name="chk" onClick="apply()"></td>
-                    </tr> I have read the 'Important Information' section and declare that I comply with the criteria stated above.
-                    <tr>
-                        <td align=center><input type="button" name="sub" href="annotatepage.html" value="submit" disabled>Button</td>
-                    </tr>
-                    <tr>
-                        <td align=center><a href="annotatepage.html" style="color:#3D366F;text-decoration:none;cursor:pointer;font-size:13px" disabled>Submit</a></td>
-                    </tr>
-                </table>
-            </form>
+            <!-- to change where the user gets redirected to adjust the 'value' -->
+            <input type="checkbox" name="CBox0" value="annotatepage.html" onclick="if(this.checked){OpenWindow(this.value)}"><b>    By ticking the checkbox you confirm that you have read the 'Important Information' section & declare that you comply with the
+            criteria stated above.</b>
             <script type="text/javascript">
-                function apply() {
-                    document.frm.sub.disabled = true;
-                    if (document.frm.chk.checked == true) {
-                        document.frm.sub.disabled = false;
-                    }
-                    if (document.frm.chk.checked == false) {
-                        document.frm.sub.enabled = false;
-                    }
+                function OpenWindow(info) {
+                    window.open(info, "newWin", "width=" + screen.availWidth + ",height=" + screen.availHeight);
                 }
             </script>
 
         </div>
     </div>
 
-    <form class="" action="index.html" method="post">
-
-    </form>
-<a href="annotatepage.html">button</a>
 </body>
 
 </html>
