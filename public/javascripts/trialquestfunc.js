@@ -14,23 +14,24 @@ var trialDone = false;
 
 // Big box dimensions
 var big_TLx = 277;
-var big_TLy = 127;
-var big_TRx = 471;
-var big_TRy = 127;
 var big_BLx = 277;
-var big_BLy = 299;
+var big_TRx = 471;
 var big_BRx = 471;
+var big_TRy = 127;
+var big_TLy = 127;
+var big_BLy = 299;
 var big_BRy = 299;
 
 // Small box dimensions
-var small_TLx = 326;
+
 var small_TLy = 156;
-var small_TRx = 427;
 var small_TRy = 156;
 var small_BLx = 326;
-var small_BLy = 232;
+var small_TLx = 326;
 var small_BRx = 427;
+var small_TRx = 427;
 var small_BRy = 232;
+var small_BLy = 232;
 
 function doChecks(perimeter)
 {
@@ -59,7 +60,6 @@ function x_positions(perimeter) { // Creates an array containing only the X-axis
 
     xpo_min = Math.min(...xpo);// smallest value of xpo
     
-    console.log(xpo_max,xpo_min)
     return [xpo,xpo_max,xpo_min]
 }
 
@@ -67,40 +67,41 @@ function y_positions(perimeter) { // Creates an array containing only the Y-axis
     ypo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
         return index % 2 == 1;
     });
-    console.log(ypo)
     ypo_max = Math.max(...ypo); // largest value of ypo
 
     ypo_min = Math.min(...ypo); // smallest value of ypo
-    console.log(ypo_max,ypo_min)
     return [ypo,ypo_max,ypo_min]
 }
 
 function big_box(xpo_min,xpo_max,ypo_min,ypo_max) { // Checks if the polygon dimensions fit within the big box
-    /*
+    
     console.log("xpo min = " + xpo_min + "big_BLx = " + big_BLx)
     console.log("xpo_max =" + xpo_max + "big_TRx ="+ big_TRx)
     console.log("ypo_min = " + ypo_min + "big_TRy = " + big_TRy)
     console.log("ypo_max=" + ypo_max + "big_BLy = " + big_BLy )
-    */
+    
     if ((xpo_min > big_BLx) && (ypo_max < big_BLy) && (xpo_max < big_TRx) && (ypo_min > big_TRy)) {
         return true;
-    } else {
-        alert("Your annotation is not accurate enough, please try again.");
     }
 }
 function small_box(xpo,ypo) { // Checks if the polygon dimensions fits around the small box
     var i;
     var sb_status = false
     for (i = 0; i < xpo.length; i++) {
-        /*
+        
         console.log("xpo = " + xpo[i] + "ypo = " + ypo[i])
         console.log("small_BLx = " + small_BLx + "small_BRx = " + small_BRx)
         console.log("small_TLy =" + small_TLy + "small_BLy ="+ small_BLy)
-        */
-        if (((small_BLx > xpo[i]) || (xpo[i] > small_BRx))) {
+
+        var outSmallBoxX = small_BLx > xpo[i] || xpo[i] > small_BRx
+        var outSmallBoxY = small_TLy > ypo[i] || small_BLy < ypo[i]
+        
+        if ( (outSmallBoxX && (outSmallBoxY || !outSmallBoxY))  || (outSmallBoxY && (outSmallBoxX || !outSmallBoxX)) ) {
             sb_status = true;
-        } else {
-            alert("Your annotation is not accurate enough, please try again.");
+        }
+        else
+        {
+            return false;
         }
     }
     return sb_status
@@ -125,7 +126,7 @@ function small_box(xpo,ypo) { // Checks if the polygon dimensions fits around th
 }
 */
 
-function line_intersects(p0, p1, p2, p3) {
+function line_intersects(p0, p1, p2, p3) { 
     var s1_x, s1_y, s2_x, s2_y;
     s1_x = p1['x'] - p0['x'];
     s1_y = p1['y'] - p0['y'];
@@ -227,7 +228,7 @@ function check_intersect(x, y) {
     return false;
 }
 
-function point_it(event) {
+async function point_it(event) {
     var rect, x, y;
     if (event.ctrlKey) {
         //for faster undo use ctrl+click
@@ -245,17 +246,19 @@ function point_it(event) {
             alert('The line you are drawing intersect another line');
             return false;
         }
-        trialDone = doChecks(perimeter)
-        if(trialDone == false){
+        if(await doChecks(perimeter) == false){
             alert('Your annotation is not accurate enough, please try again.')
             clear_canvas();
+            return false
         }
+        else {
         draw(true);
         prompt("Annotaion completed successfully, redirecting you to your survey!");
         let url = window.location.toString().split('/')
         window.location = url[0] + "//" + url[2] + "/survey/" + surveyUrl
         event.preventDefault();
         return false;
+        }
     } else {
         rect = canvas.getBoundingClientRect();
         x = event.clientX - rect.left;

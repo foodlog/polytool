@@ -2,128 +2,11 @@ var perimeter = new Array();
 var complete = false;
 var canvas;
 var ctx;
-var peritmeters = [];
+var perimeters = [];
+var output = [];
+var imageNumber = 0;
 var tags = [];
 var person = "";
-var bigBox;
-var smallBox;
-
-var trialDone = false;
-// There's probably a much cleaner way of doing this, but this is just temporary to simplify debugging
-// T = Top | B = Bottom // L = Left | R = Right // x = X-axis | y = Y-axis
-
-// Big box dimensions
-var big_TLx = 277;
-var big_TLy = 127;
-var big_TRx = 471;
-var big_TRy = 127;
-var big_BLx = 277;
-var big_BLy = 299;
-var big_BRx = 471;
-var big_BRy = 299;
-
-// Small box dimensions
-var small_TLx = 326;
-var small_TLy = 156;
-var small_TRx = 427;
-var small_TRy = 156;
-var small_BLx = 326;
-var small_BLy = 232;
-var small_BRx = 427;
-var small_BRy = 232;
-
-function doChecks(perimeter)
-{
-    var perimeterArray = [];
-    for(var i = 0; i < perimeter.length;i++)
-    {
-        perimeterArray.push(perimeter[i].x)
-        perimeterArray.push(perimeter[i].y)
-    }
-    var xPositions = x_positions(perimeterArray)
-    var yPositions = y_positions(perimeterArray)
-    bigBox = big_box(xPositions[2],xPositions[1],yPositions[2],yPositions[1])
-    smallBox = small_box(xPositions[0],yPositions[0])
-    if(bigBox == true && smallBox == true)
-        return true
-    else 
-        return false
-}
-
-function x_positions(perimeter) { // Creates an array containing only the X-axis values
-    xpo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
-        return index % 2 == 0;
-    });
-
-    xpo_max = Math.max(...xpo); // largest value of xpo
-
-    xpo_min = Math.min(...xpo);// smallest value of xpo
-    
-    console.log(xpo_max,xpo_min)
-    return [xpo,xpo_max,xpo_min]
-}
-
-function y_positions(perimeter) { // Creates an array containing only the Y-axis values
-    ypo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
-        return index % 2 == 1;
-    });
-    console.log(ypo)
-    ypo_max = Math.max(...ypo); // largest value of ypo
-
-    ypo_min = Math.min(...ypo); // smallest value of ypo
-    console.log(ypo_max,ypo_min)
-    return [ypo,ypo_max,ypo_min]
-}
-
-function big_box(xpo_min,xpo_max,ypo_min,ypo_max) { // Checks if the polygon dimensions fit within the big box
-    /*
-    console.log("xpo min = " + xpo_min + "big_BLx = " + big_BLx)
-    console.log("xpo_max =" + xpo_max + "big_TRx ="+ big_TRx)
-    console.log("ypo_min = " + ypo_min + "big_TRy = " + big_TRy)
-    console.log("ypo_max=" + ypo_max + "big_BLy = " + big_BLy )
-    */
-    if ((xpo_min > big_BLx) && (ypo_max < big_BLy) && (xpo_max < big_TRx) && (ypo_min > big_TRy)) {
-        return true;
-    } else {
-        alert("Your annotation is not accurate enough, please try again.");
-    }
-}
-function small_box(xpo,ypo) { // Checks if the polygon dimensions fits around the small box
-    var i;
-    var sb_status = false
-    for (i = 0; i < xpo.length; i++) {
-        /*
-        console.log("xpo = " + xpo[i] + "ypo = " + ypo[i])
-        console.log("small_BLx = " + small_BLx + "small_BRx = " + small_BRx)
-        console.log("small_TLy =" + small_TLy + "small_BLy ="+ small_BLy)
-        */
-        if (((small_BLx > xpo[i]) || (xpo[i] > small_BRx))) {
-            sb_status = true;
-        } else {
-            alert("Your annotation is not accurate enough, please try again.");
-        }
-    }
-    return sb_status
-}
-/*
-function small_box(xpo,ypo) { // Checks if the polygon dimensions fits around the small box
-    var i;
-    var sb_status = false
-    for (i = 0; i < xpo.length; i++) {
-        console.log("xpo = " + xpo[i] + "ypo = " + ypo[i])
-        console.log("small_BLx = " + small_BLx + "small_BRx = " + small_BRx)
-        console.log("small_TLy =" + small_TLy + "small_BLy ="+ small_BLy)
-        //If we're aiming for polygons then checking for the Y positions does not make sense
-        //As in polygons there will be points not on the upper or lower sides
-        if (((small_BLx > xpo[i]) || (xpo[i] > small_BRx)) && ((small_TLy > ypo[i]) || (small_BLy < ypo[i]))) {
-            sb_status = true;
-        } else {
-            alert("Your annotation is not accurate enough, please try again.");
-        }
-    }
-    return sb_status
-}
-*/
 
 function line_intersects(p0, p1, p2, p3) {
     var s1_x, s1_y, s2_x, s2_y;
@@ -147,23 +30,41 @@ function point(x, y) {
     ctx.moveTo(x, y);
 }
 
+// undo basically clears the canvas and then starts a new canvas and draw the old figures in it
 function undo() {
-    ctx = undefined;
-    perimeter.pop();
+    clear_canvas(true);
     complete = false;
-    $("#submitButton").attr("disabled", "disabled");
-    start(true);
 }
-
-function clear_canvas() {
+// when this is used for undo, make sure to draw old figures
+function clear_canvas(undoVal) {
     ctx = undefined;
     perimeter = new Array();
     complete = false;
     $("#submitButton").attr("disabled", "disabled");
     document.getElementById('coordinates').value = '';
-    start();
+    start(false,undoVal);
 }
 
+// drawAll draws every figure in the perimeters array, which is the entire figure list until the last uncomplete figure
+function drawAll() {
+    for(var j = 0;j < perimeters.length;j++) {
+        perimeter = new Array();
+        for (var i = 0; i < perimeters[j].length+1; i++) {
+            if (i == perimeters[j].length) {
+                draw(true,perimeter)
+                break;
+            } else {
+                perimeter.push(perimeters[j][i])
+                draw(false,perimeter)
+            }
+            
+        }  
+    }
+    perimeter = new Array();
+}
+
+//
+// deleted the "Complete" part of the if statement, it was causing a multiple mouse click problem
 function draw(end) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = "white";
@@ -226,7 +127,6 @@ function check_intersect(x, y) {
     }
     return false;
 }
-
 function point_it(event) {
     var rect, x, y;
     if (event.ctrlKey) {
@@ -245,15 +145,14 @@ function point_it(event) {
             alert('The line you are drawing intersect another line');
             return false;
         }
-        trialDone = doChecks(perimeter)
-        if(trialDone == false){
-            alert('Your annotation is not accurate enough, please try again.')
-            clear_canvas();
-        }
         draw(true);
-        prompt("Annotaion completed successfully, redirecting you to your survey!");
-        let url = window.location.toString().split('/')
-        window.location = url[0] + "//" + url[2] + "/survey/" + surveyUrl
+        person = prompt("Polygon Closed, please enter the tag");
+        while (person == null && person == "") {
+            person = prompt("Polygon Closed, please enter the tag");
+        }
+        perimeters.push(perimeter)
+        tags.push(person);
+        perimeter = new Array();
         event.preventDefault();
         return false;
     } else {
@@ -277,12 +176,15 @@ function point_it(event) {
     }
 }
 
-function start(with_draw) {
+function start(with_draw,isUndo) {
     canvas = document.getElementById("jPolygon");
+    // imgcard = document.getElementById("imgcard");
     var img = new Image();
     img.src = canvas.getAttribute('data-imgsrc');
     img.onload = function() {
         // img.width = getElementById("imgcard");
+        // canvas.width = imgcard.style.width;
+        // img.width = imgcard.style.width;
         canvas.width = img.width;
         canvas.height = img.height;
         ctx = canvas.getContext("2d");
@@ -290,14 +192,50 @@ function start(with_draw) {
         if (with_draw == true) {
             draw(false);
         }
+        if(isUndo){
+            drawAll()
+        }
     }
 }
 
+function myFunction() {
+    alert(" mouse left button to click & connect points \n mouse right button to complete polygon \n CTRL + mouse click to remove the last point ");
+}
+
+function submitButton(){
+    let canvas = document.getElementById("jPolygon");
+    let imageURL = canvas.getAttribute('data-imgsrc');
+    output.push({
+        tags:tags, 
+        coordinates: perimeters,
+        imageUrl: imageURL
+    })
+    let surveyUrl = window.location.pathname.split('/')[2]
+    let url = window.location.toString().split('/')
+    imageNumber = imageNumber + 1
+    if(imageNumber == trialImages.length)
+    {
+        $.ajax({
+            type: "POST",
+            url: url[0] + "//" + url[2] + "/trialSubmit/" +surveyUrl,
+            complete: function(){
+                window.location = url[0] + "//" + url[2] + "/surveyCreated/"+surveyUrl
+            },
+            contentType: 'application/json',
+            data: JSON.stringify(output)
+          });
+    }
+    else
+    {
+        canvas = document.getElementById("jPolygon");
+        canvas.setAttribute('data-imgsrc',trialImages[imageNumber].imageLink);
+        perimeters = []
+        tags = []
+        clear_canvas();
+    }
+}
 
 // Buttons functionality
-$("#submit_button").click(function(e) {
-    
-});
 $(document).ready(function() {
     // Create variables
     var perimeter = new Array();
@@ -312,13 +250,13 @@ $(document).ready(function() {
     // Initialize buttons
     $("#reset_button").click(function(e) {
         clear_canvas();
+        perimeters = []
+        tags = []
     });
 
     $("#undo_button").click(function(e) {
         undo();
     });
-
-
 
     $("#submitButton").attr("disabled", "disabled");
     $("#submitButton").detach().appendTo("#buttons");

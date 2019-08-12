@@ -8,6 +8,88 @@ var imageNumber = 0;
 var tags = [];
 var person = "";
 
+function x_positions(perimeter) { // Creates an array containing only the X-axis values
+    xpo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
+        return index % 2 == 0;
+    });
+
+    xpo_max = Math.max(...xpo); // largest value of xpo
+
+    xpo_min = Math.min(...xpo);// smallest value of xpo
+    
+    return [xpo,xpo_max,xpo_min]
+}
+
+function y_positions(perimeter) { // Creates an array containing only the Y-axis values
+    ypo = perimeter.filter(function(value, index, Arr) { // The array containing X-axis
+        return index % 2 == 1;
+    });
+    ypo_max = Math.max(...ypo); // largest value of ypo
+
+    ypo_min = Math.min(...ypo); // smallest value of ypo
+    return [ypo,ypo_max,ypo_min]
+}
+
+function doChecks(perimeter,coordinates)
+{
+    var perimeterArray = [];
+    var perimeter = perimeter[0]
+    for(var i = 0; i < perimeter.length;i++)
+    {
+        console.log(i)
+        perimeterArray.push(perimeter[i].x)
+        perimeterArray.push(perimeter[i].y)
+    }
+    console.log(coordinates)
+    var maxY = [coordinates[0]+30,coordinates[0]-30]
+    var maxX = [coordinates[1]+30,coordinates[1]-30]
+    var minY = [coordinates[2]+30,coordinates[2]-30]
+    var minX = [coordinates[3]+30,coordinates[3]-30]
+    var bigPoints = [minX[1],maxX[0],minY[1],maxY[0]]
+    var smallPoints = [minX[0],maxX[1],minY[0],maxY[1]]
+    var xPositions = x_positions(perimeterArray)
+    var yPositions = y_positions(perimeterArray)
+    var bigBox = big_box(xPositions[2],xPositions[1],yPositions[2],yPositions[1],bigPoints)
+    var smallBox = small_box(xPositions[0],yPositions[0],smallPoints)
+    if(bigBox == true && smallBox == true)
+        return true
+    else 
+        return false
+}
+function big_box(xpo_min,xpo_max,ypo_min,ypo_max,bigPoints) { // Checks if the polygon dimensions fit within the big box
+    
+    console.log("xpo min = " + xpo_min + "big_BLx = " + bigPoints[0])
+    console.log("xpo_max =" + xpo_max + "big_TRx ="+ bigPoints[1])
+    console.log("ypo_min = " + ypo_min + "big_TRy = " + bigPoints[2])
+    console.log("ypo_max=" + ypo_max + "big_BLy = " + bigPoints[3] )
+    
+    if ((xpo_min > bigPoints[0]) && (ypo_max < bigPoints[3]) && (xpo_max < bigPoints[1]) && (ypo_min > bigPoints[2])) {
+        return true;
+    }
+}
+function small_box(xpo,ypo,smallPoints) { // Checks if the polygon dimensions fits around the small box
+    var i;
+    var sb_status = false
+    for (i = 0; i < xpo.length; i++) {
+        
+        console.log("xpo = " + xpo[i] + "ypo = " + ypo[i])
+        console.log("small_BLx = " + smallPoints[0] + "small_BRx = " + smallPoints[1])
+        console.log("small_TLy =" + smallPoints[2] + "small_BLy ="+ smallPoints[3])
+
+        var outSmallBoxX = smallPoints[0] > xpo[i] || xpo[i] > smallPoints[1]
+        var outSmallBoxY = smallPoints[2] > ypo[i] || smallPoints[3] < ypo[i]
+        
+        if ( (outSmallBoxX && (outSmallBoxY || !outSmallBoxY))  || (outSmallBoxY && (outSmallBoxX || !outSmallBoxX)) ) {
+            sb_status = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return sb_status
+}
+
 function line_intersects(p0, p1, p2, p3) {
     var s1_x, s1_y, s2_x, s2_y;
     s1_x = p1['x'] - p0['x'];
@@ -202,17 +284,36 @@ function myFunction() {
     alert(" mouse left button to click & connect points \n mouse right button to complete polygon \n CTRL + mouse click to remove the last point ");
 }
 
-function submitButton(){
+async function submitButton(){
     let canvas = document.getElementById("jPolygon");
     let imageURL = canvas.getAttribute('data-imgsrc');
-    output.push({
-        tags:tags, 
-        coordinates: perimeters,
-        imageUrl: imageURL
-    })
+    if(input.images[imageNumber].coordinates != undefined){
+            var trueOrNot = await doChecks(perimeters,input.images[imageNumber].maxMins)
+        if(trueOrNot == false){
+            alert('Your annotation is not accurate enough, please try again.')
+            clear_canvas();
+            return false
+        }
+        else
+        {
+            imageNumber = imageNumber + 1
+            perimeters = []
+            tags = []
+            clear_canvas();
+        }
+
+    }
+    else 
+    {
+        output.push({
+            tags:tags, 
+            coordinates: perimeters,
+            imageUrl: imageURL
+        })
+        imageNumber = imageNumber + 1
+    }
     let surveyUrl = window.location.pathname.split('/')[2]
     let url = window.location.toString().split('/')
-    imageNumber = imageNumber + 1
     if(imageNumber == input.images.length)
     {
         $.ajax({
@@ -224,12 +325,12 @@ function submitButton(){
             contentType: 'application/json',
             data: JSON.stringify(output)
           });
-
+          return true;
     }
     else
     {
         canvas = document.getElementById("jPolygon");
-        canvas.setAttribute('data-imgsrc',input.images[imageNumber]);
+        canvas.setAttribute('data-imgsrc',input.images[imageNumber].imageUrl);
         perimeters = []
         tags = []
         clear_canvas();

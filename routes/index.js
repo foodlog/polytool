@@ -173,10 +173,30 @@ router.get('/addSurvey', helper.checkSignIn, async function (req, res, next) {
 // then followed by 7 random characters
 router.post('/addSurvey',helper.checkSignIn, async function(req,res,next){
 	let r = Math.random().toString(36).substring(7);
-	let surveyLink = req.body.databaseName.substring(0,2)+r
+	let trialOrNot = false;
+	let numberOfTrials;
+	let dataset = req.body.trialImageURLs.replace(/[\r]/g, '').replace(/[\n]/g, ' ').split(" ")
+	dataset = dataset.filter(function (el) {
+		return el != null;
+	});
+	let surveyLink = req.body.databaseName.substring(0,2)+r;
+	if(req.body.trialImages != undefined || req.body.trialImages != ""){
+		for(var i = 0; i< dataset.length; i++)
+		{
+			dataset[i] = {
+				imageLink: dataset[i]
+			}
+		}
+		trialOrNot = true;
+		numberOfTrials = parseInt(req.body.trialImages,10)
+	}
+
 	var survey = {
 		ownerEmail: req.session.user.email,
 		surveyLink: surveyLink,
+		trialOrNot: trialOrNot,
+		numberOfTrials: numberOfTrials,
+		trialImages: dataset,
 		prolificLink: req.body.Prolific,
 		amazonLink: req.body.Amazon,
 		datasetName: req.body.databaseName,
@@ -184,13 +204,59 @@ router.post('/addSurvey',helper.checkSignIn, async function(req,res,next){
 		numberOfImages: req.body.number
 	}
 	database.Surveys.create(survey)
-	res.redirect('/surveyCreated/'+surveyLink)
+	console.log(survey)
+	if(trialOrNot){
+		res.redirect('/getTrialImages/'+surveyLink);
+	}
+	else 
+	{
+		res.redirect('/surveyCreated/'+surveyLink)
+	}
 });
+
+router.get('/getTrialImages/:surveyLink',async function(req,res,next){
+	var images;
+	await database.Surveys.findOne({surveyLink:req.params.surveyLink}, function (err, obj) {
+		if (err) {
+			var err = new Error("Database Error!");
+			next(err);
+		} else {
+		images = obj.trialImages;
+	}
+	});
+	res.render('setTrial',{trialImages:images});
+})
+
+router.post('/trialSubmit/:surveyLink', express.urlencoded({ extended: true }), function(req,res,next){
+	var output = []
+	database.Surveys.findOne({surveyLink:req.params.surveyLink},async function(err,obj){
+		if (err) {
+			var err = new Error("Database Error!");
+			next(err);
+		} else {
+		obj.trialImages = req.body;
+		for(var i =0; i<req.body.length;i++)
+		{
+			output.push(helper.coordsToInfo(req.body[i].coordinates))
+			console.log(output[i])
+			obj.trialImages[i].maxMins = [output[i][1][1],output[i][0][1],output[i][1][2],output[i][0][2]]
+			/*
+			obj.trialImages[i].maxY = output[i][1][1]
+			obj.trialImages[i].maxX = output[i][0][1]
+			obj.trialImages[i].minY = output[i][1][2]
+			obj.trialImages[i].minX = output[i][0][2]
+			*/
+		}
+		await obj.save();
+	}
+	})
+	res.redirect('/surveyCreated/'+surveyLink)
+})
 
 // Shows the researcher a success page with his survey link to share
 // TODO: might be a good idea to put social media share buttons here
 router.get('/surveyCreated/:surveyLink', function(req,res,next){
-	var surveyLink = req.protocol + '://' + req.get('host') + "/survey/" +req.params.surveyLink;
+	var surveyLink = req.protocol + '://' + req.get('host') + "/consentForm/" +req.params.surveyLink;
 	res.render('surveyCreated',{surveyLink:surveyLink})
 })
 
@@ -214,7 +280,14 @@ router.get('/surveyDone/:surveyLink', async function(req,res,next){
 	amazonLink = amazonLink + (Date.now()/1000).toString().substring(0,3)
 	res.render('surveySuccess',{prolificLink:prolificLink,amazonLink:amazonLink})
 })
+router.get('/surveyTrial/:surveyUrl', function(req,res,next){
+	res.render('trial.ejs',{surveyUrl:req.params.surveyUrl})
+})
 
+router.get('/consentForm/:surveyLink', function(req,res,next){
+	var surveyLink = req.protocol + '://' + req.get('host') + "/survey/" +req.params.surveyLink;
+	res.render('consentform.ejs',{surveyLink:surveyLink})
+})
 router.get('/survey/:surveyLink',async function(req,res,next){
 	let outputImages = []
 	let surveyObj;
@@ -261,13 +334,36 @@ router.get('/survey/:surveyLink',async function(req,res,next){
 			}
 		}
 	});
-
+	var lenz = output.images.length
+	var imgs = [];
+	if(surveyObj.numberOfImages > lenz)
+		var evenlyDivided = lenz / surveyObj.numberOfTrials
+	else 
+		var evenlyDivided = 1
+	var z = 0;
+	console.log(evenlyDivided,lenz,surveyObj.numberOfTrials )
+	for(var i = 0;i<output.images.length+surveyObj.numberOfTrials;i++)
+	{
+		
+		if( (evenlyDivided == 1 && i%2 == 0) || (evenlyDivided > 1 && i%evenlyDivided == 0) ){
+			imgs.push(surveyObj.trialImages[i%evenlyDivided])
+			z++;
+		}
+		else
+		{
+			imgs.push({
+				imageUrl: output.images[i-z]
+			})
+		}
+	}
+	output.images = imgs;
+	console.log(output)
 	res.render('annotatepage.ejs',{input:output})
 })
 // for each annotation, if the image is new create an entry for it with tags and coordinates, if it is not then
 // add the array of tags and coordinates to the old entry
 router.post('/surveySubmit/:surveyUrl', express.urlencoded({ extended: true }), async function(req,res,next){
-	console.log(req.body)
+	console.log("done= ",req.body)
 	req.body.forEach(function(data){
 		var inDB = {
 			imageUrl: data.imageUrl,

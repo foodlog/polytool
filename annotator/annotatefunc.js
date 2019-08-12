@@ -150,6 +150,7 @@ function point_it(event) {
         while (person == null || person == "") {
             person = prompt("Polygon Closed, please enter the tag");
         }
+        console.log(perimeter)
         perimeter = new Array();
         event.preventDefault();
         return false;

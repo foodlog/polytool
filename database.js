@@ -42,6 +42,9 @@ const coordinatesSchema = new Schema({
 const surveySchema = new Schema({
     ownerEmail: String,
     surveyLink: String,
+    trialImages: Array,
+    trialOrNot: Boolean,
+    numberOfTrials:Number,
     prolificLink: String,
     amazonLink: String,
     datasetName: String,
