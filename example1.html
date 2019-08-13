@@ -1,0 +1,21 @@
+<html>
+<head>
+<title> Untitled </title>
+<script type="text/javascript">
+// From: http://www.webdeveloper.com/forum/showthread.php?t=242793
+
+function OpenWindow(info) {
+  window.open(info,'WinName','height=400,width=600,resizable=yes,scrollbars=yes');
+}
+</script>
+</head>
+<body>
+
+<input type="checkbox" name="CBox0" value="http://www.webdeveloper.com"
+ onclick="if(this.checked){OpenWindow(this.value)}"> Webdeveloper
+<br>
+<input type="checkbox" name="CBox1" value="http://www.google.com"
+  onclick="if(this.checked){OpenWindow(this.value)}"> Google
+
+</body>
+</html>
