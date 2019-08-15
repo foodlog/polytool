@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose')
+const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const database = require('../database');
 const helper = require('../public/javascripts/helper')
@@ -11,14 +12,16 @@ router.get('/', function(req, res, next) {
 
 // Signup as a researcher, TODO: Generate list of codes for the university and check if the code is legit
 router.post('/signupr', function(req, res, next) {
-    var user2 = {
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        admin: true,
-    }
-    database.Users.create(user2)
-    res.redirect('/login')
+    let hash = bcrypt.hash(req.body.password,12,function(err,hash){
+        var user2 = {
+            username: req.body.username,
+            email: req.body.email,
+            password: hash,
+            admin: true,
+        }
+        database.Users.create(user2)
+        res.redirect('/login')
+    })
 });
 router.get('/signupr', function(req, res, next) {
     res.render('signupr');
@@ -48,6 +51,10 @@ router.get('/main', helper.checkSignIn, function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
+    if(req.session.user != undefined && req.session.user.admin == true)
+    {
+        res.redirect('/main')
+    }
     res.render('login');
 });
 // 
@@ -56,8 +63,7 @@ router.post('/login', async function(req, res, next) {
     var loginPassword = req.body.password
     var loggedUser
     await database.Users.findOne({
-        email: loginUsername,
-        password: loginPassword
+        email: loginUsername
     }, function(err, obj) {
         if (err) {
             var err = new Error("Database Error!");
@@ -68,20 +74,30 @@ router.post('/login', async function(req, res, next) {
                 res.redirect('/login')
             }
             else{
-                loggedUser = {
-                    username: obj.username,
-                    email: obj.email,
-                    admin: obj.admin
-                }
+                loggedUser = obj;
             }
 
         }
     });
-    req.session.user = loggedUser
-    if (loggedUser.admin == true) {
-        res.redirect('/main')
-    } else
+    bcrypt.compare(loginPassword,loggedUser.password,function(err,pass){
+        console.log("pass:" + pass, loggedUser)
+        if(pass)
+        {
+            loggedUser = {
+                username: loggedUser.username,
+                email: loggedUser.email,
+                admin: loggedUser.admin
+            }
+            req.session.user = loggedUser
+           if (loggedUser.admin == true) {
+              res.redirect('/main')
+              } else
         res.redirect('/login')
+        }
+        else
+        res.redirect('/login')
+    })
+    
 })
 
 router.get('/logout', function(req, res, next) {
