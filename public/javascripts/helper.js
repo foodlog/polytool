@@ -1,10 +1,16 @@
 function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
+    return array.slice(0).sort(compareByAnnotations)
+}
+
+function compareByAnnotations(a,b)
+{
+    if ( a.annotations < b.annotations ){
+        return -1;
+      }
+      if ( a.annotations > b.annotations ){
+        return 1;
+      }
+      return 0;
 }
 
 function checkSignIn(req, res, next) {
