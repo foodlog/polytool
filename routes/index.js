@@ -123,7 +123,7 @@ router.post('/datasetExport/:id', async function(req, res, next) {
     const forLoop = async _ => {
         for (let index = 0; index < imageLinks.length; index++) {
             await database.Coords.find({
-                imageUrl: imageLinks[index]
+                imageUrl: imageLinks[index].image
             }, {
                 '_id': false
             }, function(err, obj) {
