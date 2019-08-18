@@ -14,6 +14,7 @@ function exportDataset(id){
             url: url[0] + "//" + url[2] + "/datasetExport/" +id,
             success: function(obj){
                 var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj));
+                console.log(data)
                 var a = document.createElement('a');
                 a.href = 'data:' + data;
                 a.download = 'data.json';

@@ -120,6 +120,7 @@ router.post('/datasetExport/:id', async function(req, res, next) {
             imageLinks = obj[0].images
         }
     });
+    console.log(imagelinks)
     const forLoop = async _ => {
         for (let index = 0; index < imageLinks.length; index++) {
             await database.Coords.find({
@@ -139,6 +140,7 @@ router.post('/datasetExport/:id', async function(req, res, next) {
             });
         }
     }
+    console.log(imageData)
     await forLoop();
     res.json(imageData)
 
