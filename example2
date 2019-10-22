@@ -22,18 +22,18 @@
 <body>
     <div class="card" id="top-card">
         <a href="../Information.pdf">Please read this information sheet</a>
-             <img style="display: block;margin-left: auto;margin-right: auto;width: 50%;" src="https://i.imgur.com/CFgXBAy.png" alt="consent form">
-            <!-- to change where the user gets redirected to adjust the 'value' -->
-            <input type="checkbox" name="CBox0" value="annotatepage.html" onclick="if(this.checked){OpenWindow(this.value)}"><b>    By ticking the checkbox you confirm that you have read the 'Important Information' section & declare that you comply with the
+        <img style="display: block;margin-left: auto;margin-right: auto;width: 50%;" src="https://i.imgur.com/CFgXBAy.png" alt="consent form">
+        <!-- to change where the user gets redirected to adjust the 'value' -->
+        <input type="checkbox" name="CBox0" value="annotatepage.html" onclick="if(this.checked){OpenWindow(this.value)}"><b> By ticking the checkbox you confirm that you have read the 'Important Information' section & declare that you comply with the
             criteria stated above.</b>
-            <script type="text/javascript">
-                function OpenWindow(info) {
-                     let url = window.location.toString().split('/')
-                     window.location.replace(url[0] + "//" + url[2] + "/survey/" + url[4])
-                }
-            </script>
+        <script type="text/javascript">
+            function OpenWindow(info) {
+                let url = window.location.toString().split('/')
+                window.location.replace(url[0] + "//" + url[2] + "/survey/" + url[4])
+            }
+        </script>
 
-        </div>
+    </div>
 
 </body>
 
