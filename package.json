@@ -18,7 +18,7 @@
     "file-exists": "^5.0.1",
     "http-errors": "~1.6.3",
     "mongodb": "^3.2.7",
-    "mongoose": "^5.6.6",
+    "mongoose": "^5.7.5",
     "morgan": "~1.9.1",
     "node-env-file": "^0.1.8",
     "nodemon": "^1.19.1"
